@@ -2,12 +2,8 @@ package persistencia;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import banco.Application;
 import logica.Agencia;
 
 public class AgenciaDAO implements IAgenciaDAO {
@@ -22,11 +18,10 @@ public class AgenciaDAO implements IAgenciaDAO {
 		try {
 			cmdSql = "SELECT * FROM jmpr1525_Banco.agencias";
 			rs = dbutils.ReadRecords(cmdSql);
-			Agencia agencia = null;
 			
 			if (rs.next()) { 
 				do {
-					agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
+					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
 					agencias.add(agencia);
 				} while (rs.next());
 			}  else {
@@ -42,15 +37,15 @@ public class AgenciaDAO implements IAgenciaDAO {
 	}
 
 	@Override
-	public Agencia consultaAgencia(int agencia_id) {
-		Agencia agencia;
+	public Agencia consultaAgencia(int agenciaID) {
 		DbUtilities dbutilities = new DbUtilities();
-		String stmt = "SELECT * FROM jmpr1525_Banco.agencias WHERE agencia_id = " + agencia_id;
+		String stmt = "SELECT * FROM jmpr1525_Banco.agencias WHERE agencia_id = " + agenciaID;
 		ResultSet rs = dbutilities.ReadRecords(stmt);
 		try {
 			if (rs.next()) {
 				do {
-					agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
+					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+					dbutilities.DisconnectFromDB();
 					return agencia;
 				} while (rs.next());
 			}else {
@@ -60,6 +55,8 @@ public class AgenciaDAO implements IAgenciaDAO {
 			System.out.println("Ocorreu o erro: " + e.getMessage());
 		}
 		
+		dbutilities.DisconnectFromDB();
+		
 		return null;
 	}
 	
@@ -67,12 +64,11 @@ public class AgenciaDAO implements IAgenciaDAO {
 	public void insereAgencia(Agencia agencia) {	
 		String cmdSql;
 		DbUtilities dbutilities = new DbUtilities();
-		cmdSql = "INSERT INTO jmpr1525_Banco.agencias (agencia_id, nome, morada, telefone, ultimo_cliente_id) VALUES (\"" + 
+		cmdSql = "INSERT INTO jmpr1525_Banco.agencias (agencia_id, nome, morada, telefone) VALUES (\"" + 
 				String.valueOf(agencia.getAgenciaID()) + "\", \"" + 
 				agencia.getNome() + "\", \"" +
 				agencia.getMorada() + "\", \"" +
-				agencia.getTelefone() + "\", \"" +
-				String.valueOf(agencia.getUltimoClienteID()) + "\")";
+				agencia.getTelefone() + "\" )";
 
 		dbutilities.ExecuteSqlStatement(cmdSql);
 
@@ -82,15 +78,32 @@ public class AgenciaDAO implements IAgenciaDAO {
 	}
 	
 	@Override
-	public void alteraAgencia() {
-		// TODO Auto-generated method stub
-		
+	public void alteraAgencia(Agencia agencia) {
+		DbUtilities dbutilities = new DbUtilities();
+			
+		String cmdSql = "UPDATE jmpr1525_Banco.agencias SET nome = \"" + agencia.getNome() +
+				"\", morada = \"" + agencia.getMorada() + 
+				"\", telefone = \"" + agencia.getTelefone() +
+				"\" WHERE agencia_id = \"" + Integer.toString(agencia.getAgenciaID()) + "\"";
+
+		dbutilities.ExecuteSqlStatement(cmdSql);
+
+		System.out.println("O registo foi alterado com sucesso.");
+
+		dbutilities.DisconnectFromDB();
+
 	}
 
 	@Override
-	public void apagaAgencia() {
-		// TODO Auto-generated method stub
+	public void apagaAgencia(int agenciaID) {
+		DbUtilities dbutilities = new DbUtilities();
+		String cmdSql = "DELETE FROM jmpr1525_Banco.agencias WHERE agencia_id = " + agenciaID;
 		
+		dbutilities.ExecuteSqlStatement(cmdSql);
+		
+		System.out.println("O registo foi eliminado com sucesso.");
+		
+		dbutilities.DisconnectFromDB();
 	}
 
 }

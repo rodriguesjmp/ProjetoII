@@ -4,93 +4,167 @@ import java.util.List;
 import java.util.Scanner;
 
 import logica.Agencia;
+import logica.Cliente;
 import persistencia.AgenciaDAO;
 
 public class Application {
 
 	public static void main(String[] args) {
-		MenuPrincipal();
+		menuPrincipal();
 	}
 
 	
-	public static void MenuPrincipal() {
+	public static void menuPrincipal() {
 		int selection;
 		String menuTitle = "======== MENU PRINCIPAL ========";
 		String[] opcoesMenu = {"Criar um cliente", "Listar os clientes", "Opções do cliente", 
-				"Criar uma agência", "Listar as agências", "Opções da agência", "Sair" };
+				"Criar uma agência", "Listar as agências", "Opções da agência", "Registo de operações", "Sair" };
 
 		do {
-		selection = DisplayMenu(menuTitle, opcoesMenu);		
+			selection = displayMenu(menuTitle, opcoesMenu);		
 
-		
-		switch (selection) {
-		case 0:
-			System.out.println("Create insertActor = new Create() ");
-			break;
-		case 1:
-			System.out.println("Read()");
-			break;
-		case 2:
-			MenuOptCliente();
-			break;
-		case 3:			
-			insereAgencia();
-			break;
-		case 4:
-			listarAgencias();
-			break;
-		case 6:
-			System.out.println("Bye.");
-			break;
+			switch (selection) {
+			case 0:
+				System.out.println("Criar um cliente: ainda não implementado");
+				break;
+			case 1:
+				System.out.println("Listar os clientes: ainda não implementado");
+				break;
+			case 2:
+				menuOptCliente();
+				break;
+			case 3:			
+				insereAgencia();
+				break;
+			case 4:
+				listarAgencias();
+				break;
+			case 5:
+				menuOptAgencia();
+				break;
+			case 6:
+				menuRegistoOperacoes();
+				break;
+			case 7:
+				System.out.println("Bye.");
+				break;
 
-		default:
-			System.out.println("Opção inválida!");
-			break;
-		}
-		} while (selection != 6);
+			default:
+				System.out.println("Opção inválida!");
+				break;
+			}
+		} while (selection != 7);
 
 	} // Fim do método: MenuPrincipal()
 	
-	
 
 	
-	public static void MenuOptCliente() {
+	public static void menuOptCliente() {
 		int selection;
 		String menuTitle = "====== MENU OPÇÕES CLIENTE =====";
-		String[] opcoesMenu = {"Atualizar cliente", "Apagar cliente", "Listar contas", 
-				"Listar cartoes", "Listar movimentos", "Opções de conta", "Menu anterior" };
-		selection = DisplayMenu(menuTitle, opcoesMenu);
+		String[] opcoesMenu = {"Editar os dados do cliente", "Apagar um cliente", "Criar conta", "Listar contas do cliente", 
+				"Alterar dados da conta", "Apagar conta", "Criar cartões", "Listar cartoes do cliente", "Alterar dados do cartão",
+				"Apagar cartão", "Menu anterior" };
+		selection = displayMenu(menuTitle, opcoesMenu);
 
 		switch (selection) {
 		case 0:
-			System.out.println("UpdateCliente()");
+			System.out.println("updateCliente()");
 			break;
 		case 1:
-			System.out.println("DeleteCliente()");
+			System.out.println("deleteCliente()");
 			break;
 		case 2:
-			System.out.println("ReadContas()");
+			System.out.println("insereConta()");
 			break;
 		case 3:
-			System.out.println("ReadCartoes()");
+			System.out.println("consultaContasCliente()");
 			break;
 		case 4:
-			System.out.println("ReadMovimentos");
+			System.out.println("updateConta()");
 			break;
 		case 5:
-			System.out.println("MenuOptConta()");
+			System.out.println("deleteConta()");
+			break;
+		case 6:
+			System.out.println("insereConta()");
+			break;
+		case 7:
+			System.out.println("consultaContasCliente()");
+			break;
+		case 8:
+			System.out.println("updateConta()");
+			break;
+		case 9:
+			System.out.println("deleteConta()");
 			break;
 		default:
 			System.out.println("Opção inválida!");
-		case 6:
-			Application.MenuPrincipal();
+		case 10:
 			break;
-
 		}
 	} // Fim do método: MenuOptCliente()
 
 	
-	public static int DisplayMenu(String menuTitle, String[] opcoesMenu) {
+	public static void menuOptAgencia() {
+		int selection;
+		String menuTitle = "====== MENU OPÇÕES AGÊNCIA =====";
+		String[] opcoesMenu = {"Editar os dados da agência", "Apagar uma agência", 
+				"Listar clientes da agência",  "Menu anterior" };
+		selection = displayMenu(menuTitle, opcoesMenu);
+
+		switch (selection) {
+		case 0:
+			updateAgencia();
+			break;
+		case 1:
+			deleteAgencia();
+			break;
+		case 2:
+			consultaClientesAgencia();
+			break;
+		default:
+			System.out.println("Opção inválida!");
+		case 3:
+			break;
+		}
+	} // Fim do método: MenuOptAgencia()
+
+	/*
+	 * MENU Registo de operações
+	 */
+	public static void menuRegistoOperacoes() {
+		int selection;
+		String menuTitle = "====== MENU REGISTO DE OPERAÇÕES =====";
+		String[] opcoesMenu = {"Listar movimentos da conta", "Nova transferência", 
+				"Novo levantamento", "Novo depósito", "Avançar um período", "Menu anterior" };
+		selection = displayMenu(menuTitle, opcoesMenu);
+
+		switch (selection) {
+		case 0:
+			System.out.println("consultaMovimentosConta()");
+			break;
+		case 1:
+			System.out.println("criaTransferencia()");
+			break;
+		case 2:
+			System.out.println("criaLevantamento()");
+			break;
+		case 3:
+			System.out.println("criaDeposito()");
+			break;
+		case 4:
+			System.out.println("avancaPeriodo()");
+			break;
+		default:
+			System.out.println("Opção inválida!");
+		case 5:
+			break;
+		}
+	}
+	
+	
+	public static int displayMenu(String menuTitle, String[] opcoesMenu) {
 		Scanner userInput = new Scanner(System.in);
 		int readOption;
 		
@@ -119,12 +193,14 @@ public class Application {
 		String nome;
 		String morada;
 		String telefone;
-		int ultimoClienteID = 0;
+		
+		System.out.println("\n[3.Criar uma agência]");
 
 		Scanner userInput = new Scanner(System.in);
 		
-		System.out.println("\nINSERIR NOVA AGÊNCIA");
-		System.out.println("----------------------");
+		System.out.println("--------------------");
+		System.out.println("INSERIR NOVA AGÊNCIA");
+		System.out.println("--------------------");
 		
 		System.out.println("Digite o numero da agência:");
 		agenciaID = Integer.parseInt(userInput.next());
@@ -138,7 +214,7 @@ public class Application {
 		System.out.println("Digite o telefone da agência:");
 		telefone = userInput.next();
 
-		Agencia agencia = new Agencia(agenciaID, nome, morada, telefone, ultimoClienteID);
+		Agencia agencia = new Agencia(agenciaID, nome, morada, telefone);
 		
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
 		agenciaDao.insereAgencia(agencia);
@@ -151,12 +227,136 @@ public class Application {
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
 		List<Agencia> agencias = agenciaDao.listarAgencias();
 				
-		System.out.println("Lista de todas as agencias:");
-		System.out.println("---------------------------");
+		System.out.println("\n[4.Listar as agências]");
+		System.out.println("Resultados encontrados:");
 		
 		for( Agencia agencia : agencias) {
-			System.out.println(agencia.toString());
+			displayAgencia(agencia);
+			System.out.println("--------------------------------------------------");
 		}
-		System.out.println("Fim da lista.");
+		System.out.println("Fim da lista.\n");
+	}
+	
+	/*
+	 * Editar os dados da agencia
+	 */
+	public static void updateAgencia() {
+		int agenciaID;
+		String nome, morada, telefone, dadosOkay;
+		
+		System.out.println("\n[5-0.Editar os dados da agencia]");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("Digite o numero da agência:");
+		agenciaID = Integer.parseInt(userInput.next());
+
+		Agencia agencia;
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		agencia = agenciaDao.consultaAgencia(agenciaID);
+		
+		if (agencia == null) {
+			System.out.println("Agência não encontrada!");
+			return;
+		}
+		
+		do {
+			nome = agencia.getNome();
+			System.out.println("Digite o novo nome da agência ["+nome+"]:");
+			nome = userInput.next();
+
+			morada = agencia.getMorada();
+			System.out.println("Digite a nova morada da agência ["+morada+"]:");
+			morada = userInput.next();
+
+			telefone = agencia.getTelefone();
+			System.out.println("Digite o novo telefone da agência ["+telefone+"]:");
+			telefone = userInput.next();
+
+			System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar.");
+			dadosOkay = userInput.next();
+		} while (!"S".equalsIgnoreCase(dadosOkay));
+
+		agencia.setNome(nome);
+		agencia.setMorada(morada);
+		agencia.setTelefone(telefone);
+		
+		agenciaDao.alteraAgencia(agencia);
+	}
+
+	/*
+	 * Apagar uma agencia
+	 */
+	public static void deleteAgencia() {
+		int agenciaID;
+		String confirmDelete;
+		
+		System.out.println("\n[5-1.Apagar uma agência]");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("Digite o numero da agência a eliminar:");
+		agenciaID = Integer.parseInt(userInput.next());
+
+		Agencia agencia;
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		agencia = agenciaDao.consultaAgencia(agenciaID);
+		
+		if (agencia == null) {
+			System.out.println("Agência não encontrada!");
+			return;
+		}
+		
+		displayAgencia(agencia);
+
+		System.out.println("Inserir \"s\" ou \"S\" para confirmar a eliminação.");
+		confirmDelete = userInput.next();
+
+		if ("S".equalsIgnoreCase(confirmDelete)) {
+			agenciaDao.apagaAgencia(agenciaID);
+		}
+	}
+
+	/*
+	 * consulta de todos os clientes de uma agencia
+	 */
+	public static void consultaClientesAgencia() {
+		int agenciaID;
+		
+		System.out.println("\n[5-2.Listar clientes da agência");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("Digite o numero da agência:");
+		agenciaID = Integer.parseInt(userInput.next());
+
+		Agencia agencia;
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		agencia = agenciaDao.consultaAgencia(agenciaID);
+		
+		if (agencia == null) {
+			System.out.println("Agência não encontrada!");
+			return;
+		}
+
+		System.out.println("Lista de clientes da agência ["+agencia.getAgenciaID()+":"+agencia.getNome()+"]");
+
+		System.out.println("Resultados encontrados:");
+//		for( Cliente cliente : clientes) {
+//			cliente.toString();
+//			System.out.println("--------------------------------------------------");
+//		}
+		System.out.println("Fim da lista.\n");
+
+	}
+	
+	/*
+	 * display dos dados de uma agencia
+	 */
+	public static void displayAgencia(Agencia agencia) {
+		System.out.println("      Id: " + agencia.getAgenciaID());
+		System.out.println("    Nome: " + agencia.getNome());
+		System.out.println("  Morada: " + agencia.getMorada());
+		System.out.println("Telefone: " + agencia.getTelefone());
 	}
 }

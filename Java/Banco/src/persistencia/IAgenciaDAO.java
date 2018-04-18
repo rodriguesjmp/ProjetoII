@@ -6,9 +6,8 @@ import logica.Agencia;
 
 public interface IAgenciaDAO {
 	public List<Agencia> listarAgencias();
-	public Agencia consultaAgencia(int agencia_id);
-	public void alteraAgencia();
-	public void apagaAgencia();
+	public Agencia consultaAgencia(int agenciaID);
 	public void insereAgencia(Agencia agencia);
-
+	public void alteraAgencia(Agencia agencia);
+	public void apagaAgencia(int agenciaID);
 }
