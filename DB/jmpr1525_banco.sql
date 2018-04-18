@@ -121,6 +121,7 @@ CREATE TABLE `contas` (
   `tipo` varchar(45) NOT NULL DEFAULT '"ord"',
   `descricao` varchar(45) NOT NULL,
   `data_criacao` date NOT NULL,
+  `saldo` double NOT NULL,
   `taxa_remuneracao` double DEFAULT NULL,
   `preriocidade_juros` int(11) DEFAULT NULL,
   `prazo_dias` int(11) DEFAULT NULL,
@@ -187,4 +188,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-18 16:24:07
+-- Dump completed on 2018-04-18 17:42:41
