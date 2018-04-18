@@ -5,12 +5,14 @@ public class Agencia {
 	private String nome;
 	private String morada;
 	private String telefone;
-	
-	public Agencia(int agenciaID, String nome, String morada, String telefone) {
+	private int ultimaConta;
+
+	public Agencia(int agenciaID, String nome, String morada, String telefone, int ultimaConta) {
 		this.agenciaID = agenciaID;
 		this.nome = nome;
 		this.morada = morada;
 		this.telefone = telefone;
+		this.ultimaConta = ultimaConta;
 	}
 	
 	public int getAgenciaID() {
@@ -37,10 +39,21 @@ public class Agencia {
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
+	
+	
+	public int getUltimaConta() {
+		return ultimaConta;
+	}
+
+	public int incrementaUltimaConta() {
+		ultimaConta++;
+		return ultimaConta;
+	}
 
 	@Override
 	public String toString() {
-		return "Agencia [agenciaID=" + agenciaID + ", nome=" + nome + ", morada=" + morada + ", telefone=" + telefone + "]";
+		return "Agencia [agenciaID=" + agenciaID + ", nome=" + nome + ", morada=" + morada + ", telefone=" + telefone +
+				", ultimaConta=" + ultimaConta + "]";
 	}
 	
 }

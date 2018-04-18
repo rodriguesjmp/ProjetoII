@@ -21,7 +21,7 @@ public class AgenciaDAO implements IAgenciaDAO {
 			
 			if (rs.next()) { 
 				do {
-					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),rs.getInt(5));
 					agencias.add(agencia);
 				} while (rs.next());
 			}  else {
@@ -44,7 +44,7 @@ public class AgenciaDAO implements IAgenciaDAO {
 		try {
 			if (rs.next()) {
 				do {
-					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+					Agencia agencia = new Agencia(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
 					dbutilities.DisconnectFromDB();
 					return agencia;
 				} while (rs.next());
@@ -68,7 +68,8 @@ public class AgenciaDAO implements IAgenciaDAO {
 				String.valueOf(agencia.getAgenciaID()) + "\", \"" + 
 				agencia.getNome() + "\", \"" +
 				agencia.getMorada() + "\", \"" +
-				agencia.getTelefone() + "\" )";
+				agencia.getTelefone() + "\", \"" +
+				agencia.getUltimaConta() + "\" )";
 
 		dbutilities.ExecuteSqlStatement(cmdSql);
 
@@ -106,4 +107,17 @@ public class AgenciaDAO implements IAgenciaDAO {
 		dbutilities.DisconnectFromDB();
 	}
 
+	@Override
+	public void atualizaUltimaConta(int agenciaID, int ultimaConta) {
+		DbUtilities dbutilities = new DbUtilities();
+		
+		String cmdSql = "UPDATE jmpr1525_Banco.agencias SET ultimaconta = \"" + ultimaConta +
+				"\" WHERE agencia_id = \"" + agenciaID + "\"";
+
+		dbutilities.ExecuteSqlStatement(cmdSql);
+		
+		System.out.println("Ultima conta foi alterada com sucesso.");
+
+		dbutilities.DisconnectFromDB();
+	}
 }

@@ -78,7 +78,7 @@ public class Application {
 			System.out.println("insereConta()");
 			break;
 		case 3:
-			System.out.println("consultaContasCliente()");
+			System.out.println("listaContasCliente()");
 			break;
 		case 4:
 			System.out.println("updateConta()");
@@ -87,16 +87,16 @@ public class Application {
 			System.out.println("deleteConta()");
 			break;
 		case 6:
-			System.out.println("insereConta()");
+			System.out.println("insereCartao()");
 			break;
 		case 7:
-			System.out.println("consultaContasCliente()");
+			System.out.println("listaCartoesCliente()");
 			break;
 		case 8:
-			System.out.println("updateConta()");
+			System.out.println("updateCartao()");
 			break;
 		case 9:
-			System.out.println("deleteConta()");
+			System.out.println("deleteCartao()");
 			break;
 		default:
 			System.out.println("Opção inválida!");
@@ -193,6 +193,7 @@ public class Application {
 		String nome;
 		String morada;
 		String telefone;
+		int ultimaConta = 0;
 		
 		System.out.println("\n[3.Criar uma agência]");
 
@@ -214,7 +215,7 @@ public class Application {
 		System.out.println("Digite o telefone da agência:");
 		telefone = userInput.next();
 
-		Agencia agencia = new Agencia(agenciaID, nome, morada, telefone);
+		Agencia agencia = new Agencia(agenciaID, nome, morada, telefone, ultimaConta);
 		
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
 		agenciaDao.insereAgencia(agencia);
@@ -342,6 +343,9 @@ public class Application {
 		System.out.println("Lista de clientes da agência ["+agencia.getAgenciaID()+":"+agencia.getNome()+"]");
 
 		System.out.println("Resultados encontrados:");
+/*
+ * implementar aqui o resto do codigo
+ */
 //		for( Cliente cliente : clientes) {
 //			cliente.toString();
 //			System.out.println("--------------------------------------------------");
@@ -358,5 +362,6 @@ public class Application {
 		System.out.println("    Nome: " + agencia.getNome());
 		System.out.println("  Morada: " + agencia.getMorada());
 		System.out.println("Telefone: " + agencia.getTelefone());
+		System.out.println("UltConta: " + agencia.getUltimaConta());
 	}
 }

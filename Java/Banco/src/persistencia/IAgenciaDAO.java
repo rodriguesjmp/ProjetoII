@@ -10,4 +10,5 @@ public interface IAgenciaDAO {
 	public void insereAgencia(Agencia agencia);
 	public void alteraAgencia(Agencia agencia);
 	public void apagaAgencia(int agenciaID);
+	public void atualizaUltimaConta(int agenciaID, int ultimaConta);
 }
