@@ -7,6 +7,15 @@ public class Conta {
 	private String dataCriacao;
 	private double saldo;
 	
+	public Conta(int contaID, Cliente cliente, String tipo, String dataCriacao, double saldo) {
+		this.contaID = contaID;
+		this.cliente = cliente;
+		this.tipo = tipo;
+		this.dataCriacao = dataCriacao;
+		this.saldo = saldo;
+	}
+	
+	
 	public int getContaID() {
 		return contaID;
 	}

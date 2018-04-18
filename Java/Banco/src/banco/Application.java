@@ -25,7 +25,7 @@ public class Application {
 
 			switch (selection) {
 			case 0:
-				System.out.println("Criar um cliente: ainda não implementado");
+				insereCliente();
 				break;
 			case 1:
 				System.out.println("Listar os clientes: ainda não implementado");
@@ -363,5 +363,92 @@ public class Application {
 		System.out.println("  Morada: " + agencia.getMorada());
 		System.out.println("Telefone: " + agencia.getTelefone());
 		System.out.println("UltConta: " + agencia.getUltimaConta());
+	}
+	
+	
+	
+	
+
+	/*
+	 * Insere um novo cliente
+	 */
+	public static void insereCliente() {
+		int agenciaID, clienteID;
+		char tipo;
+		String nome, morada, telefone, email, profissao, cartaoCidadao;
+		String dadosOkay;
+		
+		System.out.println("\n[0.Criar um cliente]");
+
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("--------------------");
+		System.out.println("INSERIR NOVO CLIENTE");
+		System.out.println("--------------------");
+		
+		// Vai ler a agencia
+		Agencia agencia = null;
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		
+		do {
+			System.out.println("Digite o numero da agência (Digite 0 para cancelar):");
+			agenciaID = Integer.parseInt(userInput.next());
+
+			if (agenciaID != 0) {
+				agencia = agenciaDao.consultaAgencia(agenciaID);				
+				if (agencia == null) {
+					System.out.println("Agência não encontrada!");
+				} else {
+					System.out.println("Agência selecionada ["+agencia.getAgenciaID()+":"+agencia.getNome()+"]");
+				}
+			}
+		} while (agencia == null | agenciaID == 0);
+
+		if (agenciaID == 0) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+
+		do {
+			System.out.println("Digite o numero de cliente:");
+			clienteID = Integer.parseInt(userInput.next());
+
+			System.out.println("Digite o numero do cartão de cidadão do cliente:");
+			cartaoCidadao = userInput.next();
+
+			System.out.println("Digite o nome do cliente:");
+			nome = userInput.next();
+
+			System.out.println("Digite a morada do cliente:");
+			morada = userInput.next();
+
+			System.out.println("Digite o telefone do cliente:");
+			telefone = userInput.next();
+
+			System.out.println("Digite o email do cliente:");
+			email = userInput.next();
+
+			System.out.println("Digite a profissão do cliente:");
+			profissao = userInput.next();
+
+			System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar. (\"C\" para cancelar)");
+			dadosOkay = userInput.next();
+		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
+
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
+		/*
+		Cliente cliente = new Cliente();
+		
+		ClienteDAO clienteDao  =  new ClienteDAO();
+		clienteDao.insereCliente(cliente);
+*/
+		/*
+		 * Criar uma conta à ordem
+		 */
+		// codigo aqui!!!
 	}
 }

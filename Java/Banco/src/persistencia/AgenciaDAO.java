@@ -64,7 +64,7 @@ public class AgenciaDAO implements IAgenciaDAO {
 	public void insereAgencia(Agencia agencia) {	
 		String cmdSql;
 		DbUtilities dbutilities = new DbUtilities();
-		cmdSql = "INSERT INTO jmpr1525_Banco.agencias (agencia_id, nome, morada, telefone) VALUES (\"" + 
+		cmdSql = "INSERT INTO jmpr1525_Banco.agencias (agencia_id, nome, morada, telefone, ultimaconta) VALUES (\"" + 
 				String.valueOf(agencia.getAgenciaID()) + "\", \"" + 
 				agencia.getNome() + "\", \"" +
 				agencia.getMorada() + "\", \"" +
