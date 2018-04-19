@@ -1,7 +1,7 @@
 package logica;
 
 public class Cliente {
-	private int clienteID;
+	private int numeroCliente;
 	private Agencia agencia;
 	private String tipo;
 	private String nome;
@@ -11,9 +11,9 @@ public class Cliente {
 	private String email;
 	private String profissao;
 	
-	public Cliente(int clienteID, Agencia agencia, String tipo, String nome, String cartaoCidadao, String morada,
+	public Cliente(int numeroCliente, Agencia agencia, String tipo, String nome, String cartaoCidadao, String morada,
 			String telefone, String email, String profissao) {
-		this.clienteID = clienteID;
+		this.numeroCliente = numeroCliente;
 		this.agencia = agencia;
 		this.tipo = tipo;
 		this.nome = nome;
@@ -25,11 +25,11 @@ public class Cliente {
 	}
 	
 	
-	public int getClienteID() {
-		return clienteID;
+	public int getNumeroCliente() {
+		return numeroCliente;
 	}
-	public void setClienteID(int clienteID) {
-		this.clienteID = clienteID;
+	public void setNumeroCliente(int numeroCliente) {
+		this.numeroCliente = numeroCliente;
 	}
 	public Agencia getAgencia() {
 		return agencia;

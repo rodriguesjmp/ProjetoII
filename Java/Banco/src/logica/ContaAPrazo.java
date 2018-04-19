@@ -3,8 +3,8 @@ package logica;
 public class ContaAPrazo extends ContaPoupanca {
 	private int prazoDias;
 
-	public ContaAPrazo(int contaID, Cliente cliente, String tipo, String dataCriacao, double saldo) {
-		super(contaID, cliente, tipo, dataCriacao, saldo);
+	public ContaAPrazo(int numeroConta, Cliente cliente, String tipo, String dataCriacao, double saldo) {
+		super(numeroConta, cliente, tipo, dataCriacao, saldo);
 		// TODO Auto-generated constructor stub
 	}
 

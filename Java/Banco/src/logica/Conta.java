@@ -1,14 +1,14 @@
 package logica;
 
 public class Conta {
-	private int contaID;
+	private int numeroConta;
 	private Cliente cliente;
 	private String tipo;
 	private String dataCriacao;
 	private double saldo;
 	
-	public Conta(int contaID, Cliente cliente, String tipo, String dataCriacao, double saldo) {
-		this.contaID = contaID;
+	public Conta(int numeroConta, Cliente cliente, String tipo, String dataCriacao, double saldo) {
+		this.numeroConta = numeroConta;
 		this.cliente = cliente;
 		this.tipo = tipo;
 		this.dataCriacao = dataCriacao;
@@ -16,11 +16,11 @@ public class Conta {
 	}
 	
 	
-	public int getContaID() {
-		return contaID;
+	public int getNumeroConta() {
+		return numeroConta;
 	}
-	public void setContaID(int contaID) {
-		this.contaID = contaID;
+	public void setNumeroConta(int numeroConta) {
+		this.numeroConta = numeroConta;
 	}
 	public Cliente getCliente() {
 		return cliente;

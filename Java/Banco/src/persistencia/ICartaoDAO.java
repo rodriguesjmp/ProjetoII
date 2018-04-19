@@ -9,5 +9,5 @@ public interface ICartaoDAO {
 	public void insereCartao(Cartao cartao);
 	public void alteraCartao(Cartao cartao);
 	public void apagaCartao(int cartaoID);
-	public List<Cartao> listaCartoesCliente(int agenciaID, int clienteID);
+	public List<Cartao> listaCartoesCliente(int agenciaID, int numeroCliente);
 }

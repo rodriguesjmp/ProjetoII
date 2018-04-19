@@ -373,7 +373,7 @@ public class Application {
 	 * Insere um novo cliente
 	 */
 	public static void insereCliente() {
-		int agenciaID, clienteID;
+		int agenciaID, numeroCliente;
 		char tipo;
 		String nome, morada, telefone, email, profissao, cartaoCidadao;
 		String dadosOkay;
@@ -411,8 +411,13 @@ public class Application {
 
 		do {
 			System.out.println("Digite o numero de cliente:");
-			clienteID = Integer.parseInt(userInput.next());
+			numeroCliente = Integer.parseInt(userInput.next());
 
+			do {
+				System.out.println("Digite o tipo de cliente (\"N\"-Normal, \"V\"-VIP): ");
+				tipo = userInput.next().toUpperCase().charAt(0);
+			} while ( (tipo != 'N') & (tipo != 'V') );
+			
 			System.out.println("Digite o numero do cartão de cidadão do cliente:");
 			cartaoCidadao = userInput.next();
 

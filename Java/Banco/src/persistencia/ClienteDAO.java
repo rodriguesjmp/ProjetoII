@@ -24,7 +24,7 @@ public class ClienteDAO implements IClienteDAO {
 			if (rs.next()) { 
 				do {
 					int agenciaID = rs.getInt(1);
-					int clienteID = rs.getInt(2);
+					int numeroCliente = rs.getInt(2);
 					String tipo = rs.getString(3);
 					String nome = rs.getString(4);
 					String cartaoCidadao = rs.getString(5);
@@ -36,7 +36,7 @@ public class ClienteDAO implements IClienteDAO {
 					AgenciaDAO agenciaDao = new AgenciaDAO();
 					Agencia agencia = agenciaDao.consultaAgencia(agenciaID);
 					 					
-					Cliente cliente = new Cliente(clienteID, agencia, tipo, nome, cartaoCidadao, morada, telefone, email, profissao);
+					Cliente cliente = new Cliente(numeroCliente, agencia, tipo, nome, cartaoCidadao, morada, telefone, email, profissao);
 					clientes.add(cliente);
 				} while (rs.next());
 			}  else {
@@ -52,7 +52,7 @@ public class ClienteDAO implements IClienteDAO {
 	}
 
 	@Override
-	public Cliente consultaCliente(int agenciaID, int clienteID) {
+	public Cliente consultaCliente(int agenciaID, int numeroCliente) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -62,10 +62,10 @@ public class ClienteDAO implements IClienteDAO {
 		// TODO Auto-generated method stub
 		String cmdSql;
 		DbUtilities dbutilities = new DbUtilities();
-		cmdSql = "INSERT INTO jmpr1525_Banco.clientes (agencia_id, cliente_id, tipo, nome, cartao_cidadao, morada, telefone, email, profissao) " +
+		cmdSql = "INSERT INTO jmpr1525_Banco.clientes (agencia_id, numero_cliente, tipo, nome, cartao_cidadao, morada, telefone, email, profissao) " +
 				"VALUES (\"" + 
 				String.valueOf(cliente.getAgencia().getAgenciaID()) + "\", \"" +
-				String.valueOf(cliente.getClienteID()) + "\", \"" + 
+				String.valueOf(cliente.getNumeroCliente()) + "\", \"" + 
 				cliente.getTipo() + "\", \"" +
 				cliente.getNome() + "\", \"" +
 				cliente.getCartaoCidadao() + "\", \"" +
@@ -88,7 +88,7 @@ public class ClienteDAO implements IClienteDAO {
 	}
 
 	@Override
-	public void apagaCliente(int agenciaID, int clienteID) {
+	public void apagaCliente(int agenciaID, int numeroCliente) {
 		// TODO Auto-generated method stub
 		
 	}
