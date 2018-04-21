@@ -53,9 +53,6 @@ public class ContaDAO implements IContaDAO {
 //					Double custo = rs.getDouble(11);
 //					int ultimoMovimento = rs.getInt(12);
 					
-					AgenciaDAO agenciaDao = new AgenciaDAO();
-					Agencia agencia = agenciaDao.consultaAgencia(agenciaID);
-					
 					ClienteDAO clienteDao = new ClienteDAO();
 					Cliente cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
 
@@ -85,9 +82,37 @@ public class ContaDAO implements IContaDAO {
 		return contas;
 	}
 
+	
 	@Override
 	public Conta consultaConta(int agenciaID, int numeroConta) {
-		// TODO Auto-generated method stub
+		DbUtilities dbutilities = new DbUtilities();
+		String stmt = "SELECT * FROM jmpr1525_Banco.contas WHERE agencia_id = " + agenciaID + " AND numero_conta = " + numeroConta;
+		ResultSet rs = dbutilities.ReadRecords(stmt);
+		try {
+			if (rs.next()) {
+				do {
+					int numeroCliente = rs.getInt(3);
+					String tipo = rs.getString(4);
+					String descricao = rs.getString(5);
+					String dataCriacao = rs.getDate(6).toString();
+					Double saldo = rs.getDouble(7);
+					
+					ClienteDAO clienteDao = new ClienteDAO();
+					Cliente cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
+					
+					Conta conta = new Conta(numeroConta, cliente, tipo, descricao, dataCriacao, saldo);
+					dbutilities.DisconnectFromDB();
+					return conta;
+				} while (rs.next());
+			}else {
+				System.out.println("Não há registos.");
+			}
+		} catch (SQLException e) {
+			System.out.println("Ocorreu o erro: " + e.getMessage());
+		}
+		
+		dbutilities.DisconnectFromDB();
+
 		return null;
 	}
 
