@@ -4,13 +4,15 @@ public class Conta {
 	private int numeroConta;
 	private Cliente cliente;
 	private String tipo;
+	private String descricao;
 	private String dataCriacao;
 	private double saldo;
 	
-	public Conta(int numeroConta, Cliente cliente, String tipo, String dataCriacao, double saldo) {
+	public Conta(int numeroConta, Cliente cliente, String tipo, String descricao, String dataCriacao, double saldo) {
 		this.numeroConta = numeroConta;
 		this.cliente = cliente;
 		this.tipo = tipo;
+		this.descricao = descricao;
 		this.dataCriacao = dataCriacao;
 		this.saldo = saldo;
 	}
@@ -34,6 +36,12 @@ public class Conta {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+	public String getDescricao() {
+		return descricao;
+	}
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 	public String getDataCriacao() {
 		return dataCriacao;
 	}
@@ -43,5 +51,14 @@ public class Conta {
 	public double getSaldo() {
 		return saldo;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Conta [numeroConta=" + numeroConta + ", " + cliente.toString() + ", tipo=" + tipo + ", dataCriacao="
+				+ dataCriacao + ", saldo=" + saldo + "]";
+	}
+	
+	
 
 }

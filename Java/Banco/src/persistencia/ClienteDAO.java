@@ -12,20 +12,30 @@ public class ClienteDAO implements IClienteDAO {
 
 	@Override
 	public List<Cliente> listarClientes() {
+		String cmdSql = "SELECT * FROM jmpr1525_Banco.clientes";
+		return readClientes(cmdSql);
+		}
+		
+	@Override
+	public List<Cliente> listarClientes(int agenciaID) {
+		String cmdSql = "SELECT * FROM jmpr1525_Banco.clientes WHERE agencia_id = " + agenciaID;
+		return readClientes(cmdSql);
+		}
+		
+	
+	public List<Cliente> readClientes(String cmdSql) {
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		DbUtilities dbutils = new DbUtilities();
 		ResultSet rs = null;
-		String cmdSql;
 
 		try {
-			cmdSql = "SELECT * FROM jmpr1525_Banco.clientes";
 			rs = dbutils.ReadRecords(cmdSql);
 			
 			if (rs.next()) { 
 				do {
 					int agenciaID = rs.getInt(1);
 					int numeroCliente = rs.getInt(2);
-					String tipo = rs.getString(3);
+					char tipo = rs.getString(3).charAt(0);
 					String nome = rs.getString(4);
 					String cartaoCidadao = rs.getString(5);
 					String morada = rs.getString(6);
@@ -65,8 +75,8 @@ public class ClienteDAO implements IClienteDAO {
 		cmdSql = "INSERT INTO jmpr1525_Banco.clientes (agencia_id, numero_cliente, tipo, nome, cartao_cidadao, morada, telefone, email, profissao) " +
 				"VALUES (\"" + 
 				String.valueOf(cliente.getAgencia().getAgenciaID()) + "\", \"" +
-				String.valueOf(cliente.getNumeroCliente()) + "\", \"" + 
-				cliente.getTipo() + "\", \"" +
+				String.valueOf(cliente.getNumeroCliente()) + "\", '" + 
+				cliente.getTipo() + "', \"" +
 				cliente.getNome() + "\", \"" +
 				cliente.getCartaoCidadao() + "\", \"" +
 				cliente.getMorada() + "\", \"" +
@@ -83,14 +93,37 @@ public class ClienteDAO implements IClienteDAO {
 
 	@Override
 	public void alteraCliente(Cliente cliente) {
-		// TODO Auto-generated method stub
+		DbUtilities dbutilities = new DbUtilities();
 		
+		String cmdSql = "UPDATE jmpr1525_Banco.clientes SET tipo = '" + cliente.getTipo() +
+				"', nome = \"" + cliente.getNome() +
+				"\", cartao_cidadao = \"" + cliente.getCartaoCidadao() + 
+				"\", morada = \"" + cliente.getMorada() + 
+				"\", telefone = \"" + cliente.getTelefone() +
+				"\", email = \"" + cliente.getEmail() +
+				"\", profissao = \"" + cliente.getProfissao() +
+				"\" WHERE agencia_id = \"" + Integer.toString(cliente.getAgencia().getAgenciaID()) + 
+				"\" AND numero_cliente = \"" + Integer.toString(cliente.getNumeroCliente()) + "\"";
+
+		dbutilities.ExecuteSqlStatement(cmdSql);
+
+		System.out.println("O registo foi alterado com sucesso.");
+
+		dbutilities.DisconnectFromDB();
+
 	}
 
 	@Override
 	public void apagaCliente(int agenciaID, int numeroCliente) {
-		// TODO Auto-generated method stub
+		DbUtilities dbutilities = new DbUtilities();
+		String cmdSql = "DELETE FROM jmpr1525_Banco.clientes WHERE agencia_id = " + agenciaID +
+				" AND numero_cliente = " + numeroCliente;
 		
+		dbutilities.ExecuteSqlStatement(cmdSql);
+		
+		System.out.println("O registo foi eliminado com sucesso.");
+		
+		dbutilities.DisconnectFromDB();
 	}
 
 }

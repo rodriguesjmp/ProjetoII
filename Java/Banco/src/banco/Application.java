@@ -1,11 +1,15 @@
 package banco;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
 import logica.Agencia;
 import logica.Cliente;
+import logica.Conta;
 import persistencia.AgenciaDAO;
+import persistencia.ClienteDAO;
+import persistencia.ContaDAO;
 
 public class Application {
 
@@ -28,7 +32,7 @@ public class Application {
 				insereCliente();
 				break;
 			case 1:
-				System.out.println("Listar os clientes: ainda não implementado");
+				listarClientes();
 				break;
 			case 2:
 				menuOptCliente();
@@ -53,7 +57,7 @@ public class Application {
 				System.out.println("Opção inválida!");
 				break;
 			}
-		} while (selection != 7);
+		} while (selection != opcoesMenu.length - 1);
 
 	} // Fim do método: MenuPrincipal()
 	
@@ -65,44 +69,48 @@ public class Application {
 		String[] opcoesMenu = {"Editar os dados do cliente", "Apagar um cliente", "Criar conta", "Listar contas do cliente", 
 				"Alterar dados da conta", "Apagar conta", "Criar cartões", "Listar cartoes do cliente", "Alterar dados do cartão",
 				"Apagar cartão", "Menu anterior" };
-		selection = displayMenu(menuTitle, opcoesMenu);
+		
+		do {
+			selection = displayMenu(menuTitle, opcoesMenu);
 
-		switch (selection) {
-		case 0:
-			System.out.println("updateCliente()");
-			break;
-		case 1:
-			System.out.println("deleteCliente()");
-			break;
-		case 2:
-			System.out.println("insereConta()");
-			break;
-		case 3:
-			System.out.println("listaContasCliente()");
-			break;
-		case 4:
-			System.out.println("updateConta()");
-			break;
-		case 5:
-			System.out.println("deleteConta()");
-			break;
-		case 6:
-			System.out.println("insereCartao()");
-			break;
-		case 7:
-			System.out.println("listaCartoesCliente()");
-			break;
-		case 8:
-			System.out.println("updateCartao()");
-			break;
-		case 9:
-			System.out.println("deleteCartao()");
-			break;
-		default:
-			System.out.println("Opção inválida!");
-		case 10:
-			break;
-		}
+			switch (selection) {
+			case 0:
+				System.out.println("updateCliente()");
+				break;
+			case 1:
+				System.out.println("deleteCliente()");
+				break;
+			case 2:
+				System.out.println("insereConta()");
+				break;
+			case 3:
+				System.out.println("listaContasCliente()");
+				break;
+			case 4:
+				System.out.println("updateConta()");
+				break;
+			case 5:
+				System.out.println("deleteConta()");
+				break;
+			case 6:
+				System.out.println("insereCartao()");
+				break;
+			case 7:
+				System.out.println("listaCartoesCliente()");
+				break;
+			case 8:
+				System.out.println("updateCartao()");
+				break;
+			case 9:
+				System.out.println("deleteCartao()");
+				break;
+			default:
+				System.out.println("Opção inválida!");
+			case 10:
+				break;
+			}
+		} while (selection != opcoesMenu.length - 1);
+
 	} // Fim do método: MenuOptCliente()
 
 	
@@ -111,23 +119,26 @@ public class Application {
 		String menuTitle = "====== MENU OPÇÕES AGÊNCIA =====";
 		String[] opcoesMenu = {"Editar os dados da agência", "Apagar uma agência", 
 				"Listar clientes da agência",  "Menu anterior" };
-		selection = displayMenu(menuTitle, opcoesMenu);
+		
+		do {
+			selection = displayMenu(menuTitle, opcoesMenu);
 
-		switch (selection) {
-		case 0:
-			updateAgencia();
-			break;
-		case 1:
-			deleteAgencia();
-			break;
-		case 2:
-			consultaClientesAgencia();
-			break;
-		default:
-			System.out.println("Opção inválida!");
-		case 3:
-			break;
-		}
+			switch (selection) {
+			case 0:
+				updateAgencia();
+				break;
+			case 1:
+				deleteAgencia();
+				break;
+			case 2:
+				consultaClientesAgencia();
+				break;
+			default:
+				System.out.println("Opção inválida!");
+			case 3:
+				break;
+			}
+		} while (selection != opcoesMenu.length - 1);
 	} // Fim do método: MenuOptAgencia()
 
 	/*
@@ -138,29 +149,32 @@ public class Application {
 		String menuTitle = "====== MENU REGISTO DE OPERAÇÕES =====";
 		String[] opcoesMenu = {"Listar movimentos da conta", "Nova transferência", 
 				"Novo levantamento", "Novo depósito", "Avançar um período", "Menu anterior" };
-		selection = displayMenu(menuTitle, opcoesMenu);
+		
+		do {
+			selection = displayMenu(menuTitle, opcoesMenu);
 
-		switch (selection) {
-		case 0:
-			System.out.println("consultaMovimentosConta()");
-			break;
-		case 1:
-			System.out.println("criaTransferencia()");
-			break;
-		case 2:
-			System.out.println("criaLevantamento()");
-			break;
-		case 3:
-			System.out.println("criaDeposito()");
-			break;
-		case 4:
-			System.out.println("avancaPeriodo()");
-			break;
-		default:
-			System.out.println("Opção inválida!");
-		case 5:
-			break;
-		}
+			switch (selection) {
+			case 0:
+				System.out.println("consultaMovimentosConta()");
+				break;
+			case 1:
+				System.out.println("criaTransferencia()");
+				break;
+			case 2:
+				System.out.println("criaLevantamento()");
+				break;
+			case 3:
+				System.out.println("criaDeposito()");
+				break;
+			case 4:
+				System.out.println("avancaPeriodo()");
+				break;
+			default:
+				System.out.println("Opção inválida!");
+			case 5:
+				break;
+			}
+		} while (selection != opcoesMenu.length - 1);
 	}
 	
 	
@@ -319,6 +333,18 @@ public class Application {
 	}
 
 	/*
+	 * display dos dados de uma agencia
+	 */
+	public static void displayAgencia(Agencia agencia) {
+		System.out.println("      Id: " + agencia.getAgenciaID());
+		System.out.println("    Nome: " + agencia.getNome());
+		System.out.println("  Morada: " + agencia.getMorada());
+		System.out.println("Telefone: " + agencia.getTelefone());
+		System.out.println("UltConta: " + agencia.getUltimaConta());
+	}
+
+	
+	/*
 	 * consulta de todos os clientes de uma agencia
 	 */
 	public static void consultaClientesAgencia() {
@@ -343,31 +369,36 @@ public class Application {
 		System.out.println("Lista de clientes da agência ["+agencia.getAgenciaID()+":"+agencia.getNome()+"]");
 
 		System.out.println("Resultados encontrados:");
-/*
- * implementar aqui o resto do codigo
- */
-//		for( Cliente cliente : clientes) {
-//			cliente.toString();
-//			System.out.println("--------------------------------------------------");
-//		}
+		
+		ClienteDAO clienteDao  =  new ClienteDAO();
+		List<Cliente> clientes = clienteDao.listarClientes(agencia.getAgenciaID());
+
+		for( Cliente cliente : clientes) {
+			displayCliente(cliente);
+			System.out.println("--------------------------------------------------");
+		}
 		System.out.println("Fim da lista.\n");
 
 	}
 	
-	/*
-	 * display dos dados de uma agencia
-	 */
-	public static void displayAgencia(Agencia agencia) {
-		System.out.println("      Id: " + agencia.getAgenciaID());
-		System.out.println("    Nome: " + agencia.getNome());
-		System.out.println("  Morada: " + agencia.getMorada());
-		System.out.println("Telefone: " + agencia.getTelefone());
-		System.out.println("UltConta: " + agencia.getUltimaConta());
+	// display cliente com indicação da agencia
+	public static void displayClienteFull(Cliente cliente) {
+		System.out.println("  Agencia: " + cliente.getAgencia().getAgenciaID() + " (" +
+							cliente.getAgencia().getNome() + ")");
+		displayCliente(cliente);
 	}
-	
-	
-	
-	
+	 // display dos dados de um cliente sem agencia
+	public static void displayCliente(Cliente cliente) {
+		System.out.println("NºCliente: " + cliente.getNumeroCliente());
+		String tipoDescr = cliente.getTipo() == 'N' ? "Normal" : "VIP";
+		System.out.println("     Tipo: " + tipoDescr);
+		System.out.println("     Nome: " + cliente.getNome());
+		System.out.println("C.Cidadão: " + cliente.getCartaoCidadao());
+		System.out.println("   Morada: " + cliente.getMorada());
+		System.out.println(" Telefone: " + cliente.getTelefone());
+		System.out.println("    Email: " + cliente.getEmail());
+		System.out.println("Profissão: " + cliente.getProfissao());
+	}
 
 	/*
 	 * Insere um novo cliente
@@ -402,7 +433,7 @@ public class Application {
 					System.out.println("Agência selecionada ["+agencia.getAgenciaID()+":"+agencia.getNome()+"]");
 				}
 			}
-		} while (agencia == null | agenciaID == 0);
+		} while (agencia == null & agenciaID != 0);
 
 		if (agenciaID == 0) {
 			System.out.println("Operação cancelada pelo utilizador.");
@@ -416,6 +447,11 @@ public class Application {
 			do {
 				System.out.println("Digite o tipo de cliente (\"N\"-Normal, \"V\"-VIP): ");
 				tipo = userInput.next().toUpperCase().charAt(0);
+				//ainda não é possivel ter clientes VIP
+				if (tipo == 'V') {
+					System.out.println("A opção de cliente VIP não está disponivel! Vou continuar como Normal");
+					tipo = 'N';
+				}
 			} while ( (tipo != 'N') & (tipo != 'V') );
 			
 			System.out.println("Digite o numero do cartão de cidadão do cliente:");
@@ -445,15 +481,61 @@ public class Application {
 			return;
 		}
 		
-		/*
-		Cliente cliente = new Cliente();
+		Cliente cliente = new Cliente(numeroCliente, agencia, tipo, nome, cartaoCidadao, morada, telefone, email, profissao);
 		
 		ClienteDAO clienteDao  =  new ClienteDAO();
 		clienteDao.insereCliente(cliente);
-*/
+
+		/*
+		 * automaticamente vai atribuir uma conta à ordem ao cliente criado
+		 */
+		criaContaOrdem(cliente);
+	
+	}
+	
+	public static void criaContaOrdem(Cliente cliente) {
+		// vai à tabela de agencias buscar a ultimaconta e atualiza-a
+		
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		int ultimaConta;
+		
+		cliente.setAgencia(agenciaDao.consultaAgencia(cliente.getAgencia().getAgenciaID()));
+		ultimaConta = cliente.getAgencia().incrementaUltimaConta();
+		agenciaDao.atualizaUltimaConta(cliente.getAgencia().getAgenciaID(), ultimaConta);
+
 		/*
 		 * Criar uma conta à ordem
 		 */
-		// codigo aqui!!!
+		LocalDate dataHoje = LocalDate.now();
+		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", "Conta à ordem base", dataHoje.toString(), 0.0);
+		System.out.println(conta.toString());
+
+		ContaDAO contaDao = new ContaDAO();
+		contaDao.insereConta(conta);
+		
+		/*
+		 * deve atribuir automáticamente tambem um cartao de débito
+		 */
+		
+		// escrever código aqui !!!!!
 	}
+	
+	
+	/*
+	 * Lista todos os clientes
+	 */
+	public static void listarClientes() {
+		ClienteDAO clienteDao  =  new ClienteDAO();
+		List<Cliente> clientes = clienteDao.listarClientes();
+				
+		System.out.println("\n[1.Listar os clientes]");
+		System.out.println("Resultados encontrados:");
+		
+		for( Cliente cliente : clientes) {
+			displayClienteFull(cliente);
+			System.out.println("--------------------------------------------------");
+		}
+		System.out.println("Fim da lista.\n");
+	}
+
 }

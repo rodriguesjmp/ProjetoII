@@ -3,7 +3,7 @@ package logica;
 public class Cliente {
 	private int numeroCliente;
 	private Agencia agencia;
-	private String tipo;
+	private char tipo;
 	private String nome;
 	private String cartaoCidadao;
 	private String morada;
@@ -11,7 +11,7 @@ public class Cliente {
 	private String email;
 	private String profissao;
 	
-	public Cliente(int numeroCliente, Agencia agencia, String tipo, String nome, String cartaoCidadao, String morada,
+	public Cliente(int numeroCliente, Agencia agencia, char tipo, String nome, String cartaoCidadao, String morada,
 			String telefone, String email, String profissao) {
 		this.numeroCliente = numeroCliente;
 		this.agencia = agencia;
@@ -37,10 +37,10 @@ public class Cliente {
 	public void setAgencia(Agencia agencia) {
 		this.agencia = agencia;
 	}
-	public String getTipo() {
+	public char getTipo() {
 		return tipo;
 	}
-	public void setTipo(String tipo) {
+	public void setTipo(char tipo) {
 		this.tipo = tipo;
 	}
 	public String getNome() {
@@ -79,6 +79,13 @@ public class Cliente {
 	public void setProfissao(String profissao) {
 		this.profissao = profissao;
 	}
-	
+
+
+	@Override
+	public String toString() {
+		return "Cliente [numeroCliente=" + numeroCliente + ", " + agencia.toString() + ", tipo=" + tipo + ", nome=" + nome
+				+ ", cartaoCidadao=" + cartaoCidadao + ", morada=" + morada + ", telefone=" + telefone + ", email="
+				+ email + ", profissao=" + profissao + "]";
+	}
 	
 }
