@@ -2,13 +2,16 @@ package logica;
 
 public class CartaoCredito extends Cartao {
 	private String dataLimitePagamento;
-	private String periodoExtrato;
+	private int diaInicioExtrato;
 	private double plafondMensal;
 	private double plafondDisponivel;
 	
-	public CartaoCredito(int cartaoID, String descricao, String dataCriacao, char tipo, Conta conta) {
+	public CartaoCredito(int cartaoID, String descricao, String dataCriacao, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
 		super(cartaoID, descricao, dataCriacao, tipo, conta);
-		// TODO Auto-generated constructor stub
+		this.dataLimitePagamento = dataLimitePagamento;
+		this.diaInicioExtrato = diaInicioExtrato;
+		this.plafondMensal = plafondMensal;
+		this.plafondDisponivel = plafond_disponivel;
 	}
 
 	public String getDataLimitePagamento() {
@@ -19,12 +22,12 @@ public class CartaoCredito extends Cartao {
 		this.dataLimitePagamento = dataLimitePagamento;
 	}
 
-	public String getPeriodoExtrato() {
-		return periodoExtrato;
+	public int getDiaInicioExtrato() {
+		return diaInicioExtrato;
 	}
 
-	public void setPeriodoExtrato(String periodoExtrato) {
-		this.periodoExtrato = periodoExtrato;
+	public void setDiaInicioExtrato(int diaInicioExtrato) {
+		this.diaInicioExtrato = diaInicioExtrato;
 	}
 
 	public double getPlafondMensal() {

@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import logica.Agencia;
+import logica.Cartao;
 import logica.Cliente;
 import logica.Conta;
 import persistencia.AgenciaDAO;
+import persistencia.CartaoDAO;
 import persistencia.ClienteDAO;
 import persistencia.ContaDAO;
 
@@ -397,7 +399,9 @@ public class Application {
 		System.out.println("   Morada: " + cliente.getMorada());
 		System.out.println(" Telefone: " + cliente.getTelefone());
 		System.out.println("    Email: " + cliente.getEmail());
+		System.out.println("NascidoEm: " + cliente.getDataNascimento());
 		System.out.println("Profissão: " + cliente.getProfissao());
+		System.out.println("DtCriacao: " + cliente.getDataCriacao());
 	}
 
 	/*
@@ -406,7 +410,7 @@ public class Application {
 	public static void insereCliente() {
 		int agenciaID, numeroCliente;
 		char tipo;
-		String nome, morada, telefone, email, profissao, cartaoCidadao;
+		String nome, morada, telefone, email, profissao, cartaoCidadao, dataCriacao, dataNascimento;
 		String dadosOkay;
 		
 		System.out.println("\n[0.Criar um cliente]");
@@ -454,11 +458,14 @@ public class Application {
 				}
 			} while ( (tipo != 'N') & (tipo != 'V') );
 			
+			System.out.println("Digite o nome do cliente:");
+			nome = userInput.next();
+
 			System.out.println("Digite o numero do cartão de cidadão do cliente:");
 			cartaoCidadao = userInput.next();
 
-			System.out.println("Digite o nome do cliente:");
-			nome = userInput.next();
+			System.out.println("Digite a data de nascimento do cliente:");
+			dataNascimento = userInput.next();
 
 			System.out.println("Digite a morada do cliente:");
 			morada = userInput.next();
@@ -481,7 +488,9 @@ public class Application {
 			return;
 		}
 		
-		Cliente cliente = new Cliente(numeroCliente, agencia, tipo, nome, cartaoCidadao, morada, telefone, email, profissao);
+		LocalDate myDate = LocalDate.now();
+		dataCriacao = myDate.toString();
+		Cliente cliente = new Cliente(numeroCliente, agencia, tipo, nome, cartaoCidadao, morada, telefone, email, dataCriacao, dataNascimento, profissao);
 		
 		ClienteDAO clienteDao  =  new ClienteDAO();
 		clienteDao.insereCliente(cliente);
@@ -508,16 +517,16 @@ public class Application {
 		 */
 		LocalDate dataHoje = LocalDate.now();
 		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", "Conta à ordem base", dataHoje.toString(), 0.0);
-		System.out.println(conta.toString());
 
 		ContaDAO contaDao = new ContaDAO();
 		contaDao.insereConta(conta);
 		
+		System.out.println(conta.toString());
+
 		/*
 		 * deve atribuir automáticamente tambem um cartao de débito
 		 */
-		
-		// escrever código aqui !!!!!
+		criaCartaoDebito(conta);
 	}
 	
 	
@@ -538,4 +547,19 @@ public class Application {
 		System.out.println("Fim da lista.\n");
 	}
 
+	/*
+	 * CRIA UM CARTAO DE DEBITO
+	 */
+	public static void criaCartaoDebito(Conta conta) {
+		char tipo = 'D';
+		LocalDate dataHoje = LocalDate.now();
+		Cartao cartao = new Cartao(0, "Cartao Débito", dataHoje.toString(), tipo, conta);
+		
+
+		CartaoDAO cartaoDao = new CartaoDAO();
+		cartaoDao.insereCartao(cartao);
+        cartao.setCartaoID(cartaoDao.consultaCartao(conta.getCliente().getAgencia().getAgenciaID(), conta.getNumeroConta(), tipo));
+
+		System.out.println(cartao.toString());
+	}
 }

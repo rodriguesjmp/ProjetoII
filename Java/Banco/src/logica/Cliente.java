@@ -9,10 +9,12 @@ public class Cliente {
 	private String morada;
 	private String telefone;
 	private String email;
+	private String dataCriacao;
+	private String dataNascimento;
 	private String profissao;
 	
 	public Cliente(int numeroCliente, Agencia agencia, char tipo, String nome, String cartaoCidadao, String morada,
-			String telefone, String email, String profissao) {
+			String telefone, String email, String dataCriacao, String dataNascimento, String profissao) {
 		this.numeroCliente = numeroCliente;
 		this.agencia = agencia;
 		this.tipo = tipo;
@@ -21,6 +23,8 @@ public class Cliente {
 		this.morada = morada;
 		this.telefone = telefone;
 		this.email = email;
+		this.dataCriacao = dataCriacao;
+		this.dataNascimento = dataNascimento;
 		this.profissao = profissao;
 	}
 	
@@ -73,6 +77,18 @@ public class Cliente {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public String getDataCriacao() {
+		return dataCriacao;
+	}
+	public void setDataCriacao(String dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+	public String getDataNascimento() {
+		return dataNascimento;
+	}
+	public void setDataNascimento(String dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
 	public String getProfissao() {
 		return profissao;
 	}
@@ -85,7 +101,7 @@ public class Cliente {
 	public String toString() {
 		return "Cliente [numeroCliente=" + numeroCliente + ", " + agencia.toString() + ", tipo=" + tipo + ", nome=" + nome
 				+ ", cartaoCidadao=" + cartaoCidadao + ", morada=" + morada + ", telefone=" + telefone + ", email="
-				+ email + ", profissao=" + profissao + "]";
+				+ email + ", dataCriacao=" + dataCriacao + ", dataNascimento=" + dataNascimento + ", profissao=" + profissao + "]";
 	}
 	
 }
