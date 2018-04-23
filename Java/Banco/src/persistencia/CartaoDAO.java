@@ -23,11 +23,12 @@ public class CartaoDAO implements ICartaoDAO {
 					char tipo = rs.getString(4).charAt(0);
 					String dataCriacao = rs.getDate(5).toString();
 					String descricao = rs.getString(6);
+					String nomeNoCartao = rs.getString(7);
 					
 					ContaDAO contaDao = new ContaDAO();
 					Conta conta = contaDao.consultaConta(agenciaID, numeroConta);
 					
-					Cartao cartao = new Cartao(cartaoID, descricao, dataCriacao, tipo, conta);
+					Cartao cartao = new Cartao(cartaoID, nomeNoCartao, dataCriacao, tipo, conta);
 					dbutilities.DisconnectFromDB();
 					
 					return cartao;
@@ -44,70 +45,75 @@ public class CartaoDAO implements ICartaoDAO {
 		return null;
 
 	}
-	@Override
-	public int consultaCartao(int agenciaID, int numeroConta, char tipo) {
-		int cartaoID = 0;
-		DbUtilities dbutilities = new DbUtilities();
-		String stmt = "SELECT * FROM jmpr1525_Banco.cartoes WHERE agencia_id = " + agenciaID +
-					" AND numero_conta = " + numeroConta + " AND tipo = '" + tipo + "'";
-		ResultSet rs = dbutilities.ReadRecords(stmt);
-		try {
-			if (rs.next()) {
-				do {
-					cartaoID = rs.getInt(1);
-				} while (rs.next());
-			}else {
-				System.out.println("Não há registos.");
-			}
-		} catch (SQLException e) {
-			System.out.println("Ocorreu o erro: " + e.getMessage());
-		}
-		
-		dbutilities.DisconnectFromDB();
-
-		return cartaoID;
-	}
 
 	
 	@Override
-	public void insereCartao(Cartao cartao) {
+	public int insereCartao(Cartao cartao) {
 		String cmdSql;
-		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, plafond_mensal, " +
-				"plafond_disponivel, data_limite_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
-				String.valueOf(cartao.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" + 
-				String.valueOf(cartao.getConta().getNumeroConta()) + "\", '" + 
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao) VALUES (NULL, \"" +
+				String.valueOf(cartao.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" +
+				String.valueOf(cartao.getConta().getNumeroConta()) + "\", '" +
 				cartao.getTipo() + "', \"" +
 				cartao.getDataCriacao() + "\", \"" +
-				cartao.getDescricao() + "\", NULL, NULL, NULL, NULL)";
+				cartao.getDescricao() + "\", \"" + 
+				cartao.getNomeNoCartao() + "\")";		
 		
-		createCartao(cmdSql);
+		int lastId = createCartao(cmdSql);
 
+		/*		
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao VALUES (?,?,?,?,?,?)";
+				
+		String[] dados = {
+				String.valueOf(cartao.getConta().getCliente().getAgencia().getAgenciaID()),
+				String.valueOf(cartao.getConta().getNumeroConta()),
+				String.valueOf(cartao.getTipo()),
+				cartao.getDataCriacao(),
+				cartao.getDescricao(),
+				cartao.getNomeNoCartao() };
+		
+		int lastId = createCartao(cmdSql, dados);
+*/
+		
+		return lastId;
 	}
 
 	@Override
-	public void insereCartao(CartaoCredito cartaoCredito) {
+	public int insereCartao(CartaoCredito cartaoCredito) {
 		String cmdSql;
-		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, plafond_mensal, " +
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, plafond_mensal, " +
 				"plafond_disponivel, data_limite_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
 				String.valueOf(cartaoCredito.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" + 
-				String.valueOf(cartaoCredito.getConta().getNumeroConta()) + "\", '" + 
-				cartaoCredito.getTipo() + "', \"" +
+				String.valueOf(cartaoCredito.getConta().getNumeroConta()) + "\", '" +
+				String.valueOf(cartaoCredito.getTipo()) + "', \"" +
 				cartaoCredito.getDataCriacao() + "\", \"" +
 				cartaoCredito.getDescricao() + "\", \"" +
+				cartaoCredito.getNomeNoCartao() + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondMensal()) + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondDisponivel()) + "\", \"" +
 				cartaoCredito.getDataLimitePagamento() + "\", \"" +
-				cartaoCredito.getDiaInicioExtrato() + "\")";
+				String.valueOf(cartaoCredito.getDiaInicioExtrato()) + "\")";
 		
-		createCartao(cmdSql);
+		int lastId = createCartao(cmdSql);
 
+		return lastId;
 	}
 
-	private void createCartao(String cmdSql) {
+	private int  createCartao(String cmdSql) {
 		DbUtilities dbutilities = new DbUtilities();
-		dbutilities.ExecuteSqlStatement(cmdSql);
+		int lastId = dbutilities.ExecuteSqlStatement(cmdSql);
 		System.out.println("O registo foi inserido com sucesso.");
 		dbutilities.DisconnectFromDB();
+		
+		return lastId;
+	}
+
+	private int  createCartao(String cmdSql, String[] dados) {
+		DbUtilities dbutilities = new DbUtilities();
+		int lastId = dbutilities.ExecuteSqlStatement(cmdSql, dados);
+		System.out.println("O registo foi inserido com sucesso.");
+		dbutilities.DisconnectFromDB();
+		
+		return lastId;
 	}
 
 	@Override

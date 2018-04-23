@@ -553,12 +553,22 @@ public class Application {
 	public static void criaCartaoDebito(Conta conta) {
 		char tipo = 'D';
 		LocalDate dataHoje = LocalDate.now();
-		Cartao cartao = new Cartao(0, "Cartao Débito", dataHoje.toString(), tipo, conta);
+		
+		String[] nomes = conta.getCliente().getNome().split(" ");
+		String nomeNoCartao;
+		if (nomes.length>1) {
+			nomeNoCartao = nomes[0] + " " + nomes[nomes.length - 1];
+		} else {
+			nomeNoCartao = nomes[0];
+		}
+		
+		Cartao cartao = new Cartao(0, nomeNoCartao, dataHoje.toString(), tipo, conta);
 		
 
 		CartaoDAO cartaoDao = new CartaoDAO();
-		cartaoDao.insereCartao(cartao);
-        cartao.setCartaoID(cartaoDao.consultaCartao(conta.getCliente().getAgencia().getAgenciaID(), conta.getNumeroConta(), tipo));
+		int lastId = cartaoDao.insereCartao(cartao);
+        
+		cartao.setCartaoID(lastId);
 
 		System.out.println(cartao.toString());
 	}
