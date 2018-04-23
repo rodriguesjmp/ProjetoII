@@ -1,6 +1,7 @@
 package persistencia;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +15,7 @@ public class DbUtilities {
 	static final String DATABASE_PSW = "";
 	Connection conn = null;
 	Statement stmt = null;
+	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	
 	public DbUtilities() {
@@ -58,13 +60,40 @@ public class DbUtilities {
 	/*
 	 * metodos para os comandos INSERT, UPDATE e DELETE
 	 */
-	public void ExecuteSqlStatement(String cmdSql) {
+	public int ExecuteSqlStatement(String cmdSql) {
+		int lastId = -1;
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate(cmdSql);
+			stmt.executeUpdate(cmdSql, Statement.RETURN_GENERATED_KEYS);
+			
+			final ResultSet keys = stmt.getGeneratedKeys();
+			while (keys.next()) {
+			    lastId = keys.getInt(1);
+			}
 		} catch (SQLException e) {
 			System.out.println("Ocorreu o erro " + e.getMessage() + " ao tentar alterar dados.");
 		}
+		
+		return lastId;
 	} // End of ExecuteSqlStatement()
 	
+	public int ExecuteSqlStatement(String cmdSql, String[] dados) {
+		int lastId = -1;
+		try {
+			pstmt = conn.prepareStatement(cmdSql, Statement.RETURN_GENERATED_KEYS);
+			for (int i = 0; i < dados.length; i++) {
+				pstmt.setString(i + 1, dados[i]);
+			}
+			pstmt.executeUpdate(cmdSql);
+			
+			final ResultSet keys = pstmt.getGeneratedKeys();
+			while (keys.next()) {
+			    lastId = keys.getInt(1);
+			}
+		} catch (SQLException e) {
+			System.out.println("Ocorreu o erro " + e.getMessage() + " ao tentar alterar dados.");
+		}
+		
+		return lastId;
+	} // End of ExecuteSqlStatement()
 }
