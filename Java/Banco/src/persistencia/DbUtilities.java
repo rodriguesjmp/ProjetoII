@@ -10,9 +10,12 @@ public class DbUtilities {
 //	static final String DATABASE_URL = "jdbc:mysql://64.62.211.131:3306/jmpr1525_Banco?useSSL=false";
 //	static final String DATABASE_USER = "jmpr1525_rumos";
 //	static final String DATABASE_PSW = "rumos2018";
-	static final String DATABASE_URL = "jdbc:mysql://192.168.1.152:3307/jmpr1525_Banco?useSSL=false";
-	static final String DATABASE_USER = "julio";
-	static final String DATABASE_PSW = "";
+//	static final String DATABASE_URL = "jdbc:mysql://192.168.1.152:3307/jmpr1525_Banco?useSSL=false";
+//	static final String DATABASE_USER = "julio";
+//	static final String DATABASE_PSW = "";
+	static final String DATABASE_URL = "jdbc:mysql://localhost:3306/jmpr1525_Banco?useSSL=false";
+	static final String DATABASE_USER = "root";
+	static final String DATABASE_PSW = "root";
 	Connection conn = null;
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
