@@ -1,6 +1,7 @@
 package banco;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -77,7 +78,7 @@ public class Application {
 
 			switch (selection) {
 			case 0:
-				System.out.println("updateCliente()");
+				updateCliente();
 				break;
 			case 1:
 				System.out.println("deleteCliente()");
@@ -166,7 +167,7 @@ public class Application {
 				System.out.println("criaLevantamento()");
 				break;
 			case 3:
-				System.out.println("criaDeposito()");
+				criaDeposito();
 				break;
 			case 4:
 				System.out.println("avancaPeriodo()");
@@ -464,7 +465,7 @@ public class Application {
 			System.out.println("Digite o numero do cartão de cidadão do cliente:");
 			cartaoCidadao = userInput.next();
 
-			System.out.println("Digite a data de nascimento do cliente:");
+			System.out.println("Digite a data de nascimento do cliente (yyyy-mm-dd):");
 			dataNascimento = userInput.next();
 
 			System.out.println("Digite a morada do cliente:");
@@ -502,6 +503,113 @@ public class Application {
 	
 	}
 	
+	/*
+	 * Editar os dados do cliente
+	 */
+	public static void updateCliente() {
+		int agenciaID, numeroCliente;
+		char tipo;
+		String nome, morada, telefone, email, profissao, cartaoCidadao, dataCriacao, dataNascimento;
+		String dadosOkay;
+		
+		System.out.println("\n[2-0.Editar os dados do cliente]");
+
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("-----------------------");
+		System.out.println("EDITAR DADOS DO CLIENTE");
+		System.out.println("-----------------------");
+
+		Cliente cliente = null;
+		ClienteDAO clienteDao  =  new ClienteDAO();
+
+		do {
+			System.out.println("Digite o numero da agência (Digite 0 para cancelar):");
+			agenciaID = Integer.parseInt(userInput.next());
+
+			if (agenciaID != 0) {
+				System.out.println("Digite o numero de cliente:");
+				numeroCliente = Integer.parseInt(userInput.next());
+
+				// Vai ler o cliente
+				cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);				
+				if (cliente == null) {
+					System.out.println("Cliente não encontrado!");
+				}
+			}
+		} while (cliente == null & agenciaID != 0);
+
+		if (agenciaID == 0) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
+		dataCriacao = cliente.getDataCriacao();
+		System.out.println("Cliente criado a "+dataCriacao);
+		
+		do {
+			nome = cliente.getNome();
+			tipo = cliente.getTipo();
+			morada = cliente.getMorada();
+			cartaoCidadao = cliente.getCartaoCidadao();
+			telefone = cliente.getTelefone();
+			email = cliente.getEmail();
+			dataNascimento = cliente.getDataNascimento();
+			profissao = cliente.getProfissao();
+
+			do {
+				System.out.println("Digite o tipo de cliente (\"N\"-Normal, \"V\"-VIP) ["+tipo+"]: ");
+				tipo = userInput.next().toUpperCase().charAt(0);
+				//ainda não é possivel ter clientes VIP
+				if (tipo == 'V') {
+					System.out.println("A opção de cliente VIP não está disponivel! Vou continuar como Normal");
+					tipo = 'N';
+				}
+			} while ( (tipo != 'N') & (tipo != 'V') );
+
+			System.out.println("Digite o novo nome do cliente ["+nome+"]:");
+			nome = userInput.next();
+
+			System.out.println("Digite o novo numero do cartão de cidadão do cliente ["+cartaoCidadao+"]:");
+			cartaoCidadao = userInput.next();
+
+			System.out.println("Digite a nova data de nascimento do cliente ["+dataNascimento+"]:");
+			dataNascimento = userInput.next();
+
+			System.out.println("Digite a nova morada do cliente ["+morada+"]:");
+			morada = userInput.next();
+
+			System.out.println("Digite o novo telefone do cliente ["+telefone+"]:");
+			telefone = userInput.next();
+
+			System.out.println("Digite o novo email do cliente ["+email+"]:");
+			email = userInput.next();
+
+			System.out.println("Digite a nova profissão do cliente ["+profissao+"]:");
+			profissao = userInput.next();
+
+			System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar. (\"C\" para cancelar)");
+			dadosOkay = userInput.next();
+		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
+
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
+		cliente.setTipo(tipo);
+		cliente.setNome(nome);
+		cliente.setCartaoCidadao(cartaoCidadao);
+		cliente.setMorada(morada);
+		cliente.setTelefone(telefone);
+		cliente.setEmail(email);
+		cliente.setProfissao(profissao);
+		cliente.setDataNascimento(dataNascimento);
+		
+		clienteDao.alteraCliente(cliente);
+
+	}
+	
 	public static void criaContaOrdem(Cliente cliente) {
 		// vai à tabela de agencias buscar a ultimaconta e atualiza-a
 		
@@ -516,7 +624,7 @@ public class Application {
 		 * Criar uma conta à ordem
 		 */
 		LocalDate dataHoje = LocalDate.now();
-		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", "Conta à ordem base", dataHoje.toString(), 0.0);
+		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", "Conta à ordem base", dataHoje.toString(), 0.0, 0);
 
 		ContaDAO contaDao = new ContaDAO();
 		contaDao.insereConta(conta);
@@ -553,6 +661,8 @@ public class Application {
 	public static void criaCartaoDebito(Conta conta) {
 		char tipo = 'D';
 		LocalDate dataHoje = LocalDate.now();
+		LocalDate dataValidadeTemp = dataHoje.plusYears(2);
+		String dataValidade = String.valueOf(dataValidadeTemp.getYear() + "-" + dataValidadeTemp.getMonthValue() + "-"+ dataValidadeTemp.lengthOfMonth());
 		
 		String[] nomes = conta.getCliente().getNome().split(" ");
 		String nomeNoCartao;
@@ -562,8 +672,7 @@ public class Application {
 			nomeNoCartao = nomes[0];
 		}
 		
-		Cartao cartao = new Cartao(0, nomeNoCartao, dataHoje.toString(), tipo, conta);
-		
+		Cartao cartao = new Cartao(0, nomeNoCartao, dataHoje.toString(), dataValidade, tipo, conta);	
 
 		CartaoDAO cartaoDao = new CartaoDAO();
 		int lastId = cartaoDao.insereCartao(cartao);
@@ -572,4 +681,91 @@ public class Application {
 
 		System.out.println(cartao.toString());
 	}
+	
+	/*
+	 * Selecao do cartao
+	 */
+	public static Cartao selecionaCartao() {
+		int cartaoID;
+		Cartao cartao = null;
+		CartaoDAO cartaoDao  =  new CartaoDAO();
+
+		Scanner userInput = new Scanner(System.in);
+		
+		do {
+			System.out.println("Digite o numero (ID) do cartão da conta a movimentar (Digite 0 para cancelar):");
+			cartaoID = Integer.parseInt(userInput.next());
+
+			if (cartaoID != 0) {
+				// Vai ler o cartao
+				cartao = cartaoDao.consultaCartao(cartaoID);				
+				if (cartao == null) {
+					System.out.println("Cartão inexistente!");
+				} else if (cartao.getTipo() != 'D') {
+					System.out.println("O cartão selecionado não é um cartão de débito!");
+					cartao = null;
+				}
+			}
+		} while (cartao == null & cartaoID != 0);
+
+		if (cartaoID == 0) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return null;
+		}
+		
+		cartao.toString();
+		return cartao;
+	}
+	/*
+	 * MOVIMENTO : DEPOSITO
+	 */
+	public static void criaDeposito() {
+		double valor;
+		String dadosOkay; 
+		
+		System.out.println("\n[6-3.Novo deposito]");
+
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("-----------------");
+		System.out.println("DADOS DO DEPÓSITO");
+		System.out.println("-----------------");
+
+		Cartao cartao = selecionaCartao();
+		
+		if (cartao == null) {
+			return;
+		}
+		
+		do {
+			System.out.println("Digite o valor a depositar: ");
+			valor = Double.parseDouble(userInput.next());
+			
+			System.out.println("O valor está correto? Inserir \"s\" ou \"S\" para confirmar. (\"C\" para cancelar)");
+			dadosOkay = userInput.next();
+		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
+
+		cartao.deposita(valor);
+		System.out.println(cartao.toString());
+		/*
+		 * atualiza na conta o saldo e o ultimo movimento
+		 */
+		int agenciaID = cartao.getConta().getCliente().getAgencia().getAgenciaID();
+		int numeroConta = cartao.getConta().getNumeroConta();
+		
+		int ultimoMovimento = cartao.getConta().getUtimoMovimento() + 1;
+		double saldo = cartao.getConta().getSaldo();
+		
+		ContaDAO contaDao = new ContaDAO();		
+		contaDao.atualizaSaldoUltimoMovimento(agenciaID, numeroConta, saldo, ultimoMovimento);
+		/*
+		 * criar aqui o movimento
+		 */
+		cartao.getConta().setUltimoMovimento(ultimoMovimento);
+		
+		//Movimento movimento = new Movimento();
+		//MovimentoDAO movimentoDao = new MovimentoDAO();
+		
+	}
+
 }

@@ -6,8 +6,8 @@ public class CartaoCredito extends Cartao {
 	private double plafondMensal;
 	private double plafondDisponivel;
 	
-	public CartaoCredito(int cartaoID, String descricao, String dataCriacao, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
-		super(cartaoID, descricao, dataCriacao, tipo, conta);
+	public CartaoCredito(int cartaoID, String descricao, String dataCriacao, String dataValidade, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
+		super(cartaoID, descricao, dataCriacao, dataValidade, tipo, conta);
 		this.dataLimitePagamento = dataLimitePagamento;
 		this.diaInicioExtrato = diaInicioExtrato;
 		this.plafondMensal = plafondMensal;
@@ -45,4 +45,10 @@ public class CartaoCredito extends Cartao {
 	public void setPlafondDisponivel(double plafondDisponivel) {
 		this.plafondDisponivel = plafondDisponivel;
 	}
+	
+	public double saldoDisponivel() {
+		return super.saldoDisponivel() + this.getPlafondDisponivel();
+	}
+	
+
 }

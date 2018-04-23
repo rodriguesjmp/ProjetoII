@@ -7,14 +7,16 @@ public class Conta {
 	private String descricao;
 	private String dataCriacao;
 	private double saldo;
+	private int ultimoMovimento;
 	
-	public Conta(int numeroConta, Cliente cliente, String tipo, String descricao, String dataCriacao, double saldo) {
+	public Conta(int numeroConta, Cliente cliente, String tipo, String descricao, String dataCriacao, double saldo, int ultimoMovimento) {
 		this.numeroConta = numeroConta;
 		this.cliente = cliente;
 		this.tipo = tipo;
 		this.descricao = descricao;
 		this.dataCriacao = dataCriacao;
 		this.saldo = saldo;
+		this.ultimoMovimento = ultimoMovimento;
 	}
 	
 	
@@ -48,15 +50,26 @@ public class Conta {
 	public void setDataCriacao(String dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
+	public int getUtimoMovimento() {
+		return ultimoMovimento;
+	}
+	public void setUltimoMovimento(int ultimoMovimento) {
+		this.ultimoMovimento = ultimoMovimento;
+	}
+
+	
 	public double getSaldo() {
 		return saldo;
 	}
 
+	protected void atualizaSaldo(double valor) {
+		this.saldo += valor;
+	}
 
 	@Override
 	public String toString() {
 		return "Conta [numeroConta=" + numeroConta + ", " + cliente.toString() + ", tipo=" + tipo + ", dataCriacao="
-				+ dataCriacao + ", saldo=" + saldo + "]";
+				+ dataCriacao + ", saldo=" + saldo + ", ultimoMovimento=" + ultimoMovimento + "]";
 	}
 	
 	
