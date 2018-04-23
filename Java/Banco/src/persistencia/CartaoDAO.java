@@ -24,11 +24,12 @@ public class CartaoDAO implements ICartaoDAO {
 					String dataCriacao = rs.getDate(5).toString();
 					String descricao = rs.getString(6);
 					String nomeNoCartao = rs.getString(7);
+					String dataValidade = rs.getString(8);
 					
 					ContaDAO contaDao = new ContaDAO();
 					Conta conta = contaDao.consultaConta(agenciaID, numeroConta);
 					
-					Cartao cartao = new Cartao(cartaoID, nomeNoCartao, dataCriacao, tipo, conta);
+					Cartao cartao = new Cartao(cartaoID, nomeNoCartao, dataCriacao, dataValidade, tipo, conta);
 					dbutilities.DisconnectFromDB();
 					
 					return cartao;
@@ -50,13 +51,14 @@ public class CartaoDAO implements ICartaoDAO {
 	@Override
 	public int insereCartao(Cartao cartao) {
 		String cmdSql;
-		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao) VALUES (NULL, \"" +
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, data_validade) VALUES (NULL, \"" +
 				String.valueOf(cartao.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" +
 				String.valueOf(cartao.getConta().getNumeroConta()) + "\", '" +
 				cartao.getTipo() + "', \"" +
 				cartao.getDataCriacao() + "\", \"" +
 				cartao.getDescricao() + "\", \"" + 
-				cartao.getNomeNoCartao() + "\")";		
+				cartao.getNomeNoCartao() + "\", \"" +
+				cartao.getDataValidade() + "\")";	
 		
 		int lastId = createCartao(cmdSql);
 
@@ -80,14 +82,15 @@ public class CartaoDAO implements ICartaoDAO {
 	@Override
 	public int insereCartao(CartaoCredito cartaoCredito) {
 		String cmdSql;
-		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, plafond_mensal, " +
-				"plafond_disponivel, data_limite_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, data_validade, " + 
+				"plafond_mensal, plafond_disponivel, data_limite_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
 				String.valueOf(cartaoCredito.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" + 
 				String.valueOf(cartaoCredito.getConta().getNumeroConta()) + "\", '" +
 				String.valueOf(cartaoCredito.getTipo()) + "', \"" +
 				cartaoCredito.getDataCriacao() + "\", \"" +
 				cartaoCredito.getDescricao() + "\", \"" +
 				cartaoCredito.getNomeNoCartao() + "\", \"" +
+				cartaoCredito.getDataValidade() + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondMensal()) + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondDisponivel()) + "\", \"" +
 				cartaoCredito.getDataLimitePagamento() + "\", \"" +

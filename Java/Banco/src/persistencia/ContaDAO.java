@@ -51,7 +51,7 @@ public class ContaDAO implements IContaDAO {
 //					int periocidadeJuros = rs.getInt(9);
 //					int prazoAnos = rs.getInt(10);
 //					Double custo = rs.getDouble(11);
-//					int ultimoMovimento = rs.getInt(12);
+					int ultimoMovimento = rs.getInt(12);
 					
 					ClienteDAO clienteDao = new ClienteDAO();
 					Cliente cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
@@ -67,7 +67,7 @@ public class ContaDAO implements IContaDAO {
 					}
 					*/
 					
-					Conta conta = new Conta(numeroConta, cliente, tipo, descricao, dataCriacao, saldo);
+					Conta conta = new Conta(numeroConta, cliente, tipo, descricao, dataCriacao, saldo, ultimoMovimento);
 					contas.add(conta);
 				} while (rs.next());
 			}  else {
@@ -96,11 +96,12 @@ public class ContaDAO implements IContaDAO {
 					String descricao = rs.getString(5);
 					String dataCriacao = rs.getDate(6).toString();
 					Double saldo = rs.getDouble(7);
+					int ultimoMovimento = rs.getInt(12);
 					
 					ClienteDAO clienteDao = new ClienteDAO();
 					Cliente cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
 					
-					Conta conta = new Conta(numeroConta, cliente, tipo, descricao, dataCriacao, saldo);
+					Conta conta = new Conta(numeroConta, cliente, tipo, descricao, dataCriacao, saldo, ultimoMovimento);
 					dbutilities.DisconnectFromDB();
 					return conta;
 				} while (rs.next());
@@ -247,8 +248,8 @@ public class ContaDAO implements IContaDAO {
 	public void atualizaSaldoUltimoMovimento(int agenciaID, int numeroConta, double saldo, int ultimoMovimento) {
 		
 		String cmdSql = "UPDATE jmpr1525_Banco.contas SET saldo = \"" + String.valueOf(saldo) +
-				"\", \"" + String.valueOf(ultimoMovimento) + "\" WHERE agencia_id = \"" + agenciaID + 
-				"\" AND numero_conta = \"" + ultimoMovimento + "\"";
+				"\", ultimomovimento = \"" + String.valueOf(ultimoMovimento) + "\" WHERE agencia_id = \"" + agenciaID + 
+				"\" AND numero_conta = \"" + numeroConta + "\"";
 		
 		System.out.println("Vai atualizar o saldo e o contador do ultimo movimento. Aguarde...");
 		updateConta(cmdSql);

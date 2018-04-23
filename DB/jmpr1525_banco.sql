@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `jmpr1525_banco` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `jmpr1525_banco`;
 -- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: jmpr1525_banco
@@ -49,6 +47,7 @@ CREATE TABLE `cartoes` (
   `data_criacao` date NOT NULL,
   `descricao` varchar(45) NOT NULL,
   `nome_no_cartao` varchar(45) NOT NULL,
+  `data_validade` date NOT NULL,
   `plafond_mensal` double DEFAULT NULL,
   `plafond_disponivel` double DEFAULT NULL,
   `data_limite_pagamento` date DEFAULT NULL,
@@ -146,4 +145,4 @@ CREATE TABLE `movimentos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-23 11:45:04
+-- Dump completed on 2018-04-23 17:24:52

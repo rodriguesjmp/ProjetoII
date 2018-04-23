@@ -1,14 +1,18 @@
 package logica;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Cartao {
 	private int cartaoID;
 	private String descricao;
 	private String nomeNoCartao;
 	private String dataCriacao;
+	private String dataValidade;
 	private char tipo;
 	private Conta conta;
 	
-	public Cartao(int cartaoID, String nomeNoCartao, String dataCriacao, char tipo, Conta conta) {
+	public Cartao(int cartaoID, String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta) {
 		this.cartaoID = cartaoID;
 		if (tipo == 'D') {
 			this.descricao = "CARTÃO DÉBITO";
@@ -17,8 +21,9 @@ public class Cartao {
 		}
 		this.nomeNoCartao = nomeNoCartao.toUpperCase();
 		this.dataCriacao = dataCriacao;
+		this.dataValidade = dataValidade;
 		this.tipo = tipo;
-		this.conta = conta;		
+		this.conta = conta;			
 	}
 	
 	public int getCartaoID() {
@@ -45,6 +50,12 @@ public class Cartao {
 	public void setDataCriacao(String dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
+	public String getDataValidade() {
+		return dataValidade;
+	}
+	public void setDataValidade(String dataValidade) {
+		this.dataValidade = dataValidade;
+	}
 	public char getTipo() {
 		return tipo;
 	}
@@ -58,6 +69,42 @@ public class Cartao {
 		this.conta = conta;
 	}
 
+	public double saldoDisponivel() {
+		return conta.getSaldo();
+	}
+	
+	public void deposita(double valor) {
+		this.conta.atualizaSaldo(valor);
+	}
+	
+	public boolean levanta(double valor) {
+		boolean isMovementOkay = false;
+		
+		if(this.conta.getSaldo() < valor) {
+			System.out.println("O saldo da conta é insuficiente para a operação desejada!");
+		} else {
+			deposita(valor * -1);
+			isMovementOkay = true;
+		}
+		
+		return isMovementOkay;
+	}
+	
+	public boolean tranfere(Conta contaDestino, double valor) {
+		boolean isMovementOkay = false;
+		
+		if(this.conta.equals(contaDestino)) {
+			System.out.println("Não pode transferir dinheiro para a própria conta...!");
+		} else {
+			isMovementOkay = levanta(valor);
+			if (isMovementOkay) {
+				contaDestino.atualizaSaldo(valor);
+			}
+		}
+		
+		return isMovementOkay;
+	}
+	
 	@Override
 	public String toString() {
 		return "Cartao [cartaoID=" + cartaoID + ", descricao=" + descricao + ", nomeNoCartao=" + nomeNoCartao + ", dataCriacao=" + dataCriacao + 
