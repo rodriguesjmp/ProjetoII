@@ -78,7 +78,7 @@ public class ClienteDAO implements IClienteDAO {
 				do {
 					agencia = agenciaDao.consultaAgencia(rs.getInt(1));
 					Cliente cliente = new Cliente(rs.getInt(2), agencia, rs.getString(3).charAt(0), rs.getString(4), rs.getString(5), rs.getString(6), 
-							rs.getString(7), rs.getString(8), rs.getDate(9).toString(), rs.getDate(10).toString(), rs.getString(11));
+							rs.getString(7), rs.getString(8), rs.getDate(9).toString(), String.valueOf(rs.getDate(10)), rs.getString(11));
 
 					dbutilities.DisconnectFromDB();
 					return cliente;

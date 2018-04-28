@@ -11,5 +11,6 @@ public interface ICartaoDAO {
 	public int insereCartao(CartaoCredito cartaoCredito);
 	public void alteraCartao(Cartao cartao);
 	public void apagaCartao(int cartaoID);
-	public List<Cartao> listaCartoesCliente(int agenciaID, int numeroCliente);
+	public List<Cartao> listaCartoes();
+	public List<Cartao> listaCartoes(int agenciaID, int numeroConta);
 }

@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `jmpr1525_banco` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `jmpr1525_banco`;
 -- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: jmpr1525_banco
@@ -55,7 +57,7 @@ CREATE TABLE `cartoes` (
   PRIMARY KEY (`cartao_id`),
   KEY `idx_contaagencia` (`agencia_id`,`numero_conta`),
   CONSTRAINT `fk_conta` FOREIGN KEY (`agencia_id`, `numero_conta`) REFERENCES `contas` (`agencia_id`, `numero_conta`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,21 +120,22 @@ DROP TABLE IF EXISTS `movimentos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `movimentos` (
-  `origem_agencia_id` int(11) NOT NULL,
-  `origem_numero_conta` int(11) NOT NULL,
+  `agencia_id` int(11) NOT NULL,
+  `numero_conta` int(11) NOT NULL,
   `numero_movimento` int(11) NOT NULL,
   `cartao_id` int(11) NOT NULL,
   `data_movimento` datetime NOT NULL,
+  `tipo` char(1) NOT NULL,
+  `tipo_descr` varchar(45) NOT NULL,
   `valor` double NOT NULL,
-  `tipo` varchar(45) NOT NULL,
-  `destino_agencia_id` int(11) DEFAULT NULL,
-  `destino_numero_conta` int(11) DEFAULT NULL,
   `descricao` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`numero_movimento`,`origem_agencia_id`,`origem_numero_conta`),
+  `ref_agencia_id` int(11) DEFAULT NULL,
+  `ref_numero_conta` int(11) DEFAULT NULL,
+  PRIMARY KEY (`agencia_id`,`numero_conta`,`numero_movimento`),
   KEY `fk_cartao_idx` (`cartao_id`),
-  KEY `fk_contaorigem_idx` (`origem_agencia_id`,`origem_numero_conta`),
+  KEY `fk_contaorigem_idx` (`agencia_id`,`numero_conta`),
   CONSTRAINT `fk_cartao` FOREIGN KEY (`cartao_id`) REFERENCES `cartoes` (`cartao_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_contaorigem` FOREIGN KEY (`origem_agencia_id`, `origem_numero_conta`) REFERENCES `contas` (`agencia_id`, `numero_conta`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_contaorigem` FOREIGN KEY (`agencia_id`, `numero_conta`) REFERENCES `contas` (`agencia_id`, `numero_conta`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -145,4 +148,4 @@ CREATE TABLE `movimentos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-23 17:24:52
+-- Dump completed on 2018-04-29  0:23:19

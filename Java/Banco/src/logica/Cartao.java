@@ -1,8 +1,5 @@
 package logica;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 public class Cartao {
 	private int cartaoID;
 	private String descricao;
@@ -12,12 +9,16 @@ public class Cartao {
 	private char tipo;
 	private Conta conta;
 	
-	public Cartao(int cartaoID, String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta) {
+	public Cartao(int cartaoID, String descricao,String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta) {
 		this.cartaoID = cartaoID;
-		if (tipo == 'D') {
-			this.descricao = "CARTÃO DÉBITO";
+		if(descricao.isEmpty()) {
+			if (tipo == 'D') {
+				this.descricao = "CARTÃO DÉBITO";
+			} else {
+				this.descricao = "CARTÃO CRÉDITO";
+			}
 		} else {
-			this.descricao = "CARTÃO CRÉDITO";
+			this.descricao = descricao;
 		}
 		this.nomeNoCartao = nomeNoCartao.toUpperCase();
 		this.dataCriacao = dataCriacao;
@@ -35,9 +36,9 @@ public class Cartao {
 	public String getDescricao() {
 		return descricao;
 	}
-//	public void setDescricao(String descricao) {
-//		this.descricao = descricao;
-//	}
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 	public String getNomeNoCartao() {
 		return nomeNoCartao;
 	}

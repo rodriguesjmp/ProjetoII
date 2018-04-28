@@ -6,8 +6,8 @@ public class CartaoCredito extends Cartao {
 	private double plafondMensal;
 	private double plafondDisponivel;
 	
-	public CartaoCredito(int cartaoID, String descricao, String dataCriacao, String dataValidade, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
-		super(cartaoID, descricao, dataCriacao, dataValidade, tipo, conta);
+	public CartaoCredito(int cartaoID, String descricao,  String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
+		super(cartaoID, descricao, nomeNoCartao, dataCriacao, dataValidade, tipo, conta);
 		this.dataLimitePagamento = dataLimitePagamento;
 		this.diaInicioExtrato = diaInicioExtrato;
 		this.plafondMensal = plafondMensal;
