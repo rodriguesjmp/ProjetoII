@@ -124,8 +124,49 @@ public class CartaoDAO implements ICartaoDAO {
 
 	@Override
 	public void alteraCartao(Cartao cartao) {
-		// TODO Auto-generated method stub
-		
+		DbUtilities dbutilities = new DbUtilities();
+
+		String cmdSql = "UPDATE jmpr1525_Banco.cartoes SET agencia_id = \"" + 
+				String.valueOf(cartao.getConta().getCliente().getAgencia().getAgenciaID()) +
+				"\", numero_conta = \"" + String.valueOf(cartao.getConta().getNumeroConta()) + 
+				"\", tipo = '" + cartao.getTipo() + 
+				"', data_criacao = \"" + cartao.getDataCriacao() + 
+				"\", descricao = \"" + cartao.getDescricao() + 
+				"\", nome_no_cartao = \"" + cartao.getNomeNoCartao() +
+				"\", data_validade = \"" + cartao.getDataValidade() +
+				"\" WHERE cartao_id = \"" + Integer.toString(cartao.getCartaoID()) + "\"";
+
+		dbutilities.ExecuteSqlStatement(cmdSql);
+
+		System.out.println("O registo foi alterado com sucesso.");
+
+		dbutilities.DisconnectFromDB();
+
+	}
+	@Override
+	public void alteraCartao(CartaoCredito cartaoCredito) {
+		DbUtilities dbutilities = new DbUtilities();
+
+		String cmdSql = "UPDATE jmpr1525_Banco.cartoes SET agencia_id = \"" + 
+				String.valueOf(cartaoCredito.getConta().getCliente().getAgencia().getAgenciaID()) +
+				"\", numero_conta = \"" + String.valueOf(cartaoCredito.getConta().getNumeroConta()) + 
+				"\", tipo = '" + cartaoCredito.getTipo() + 
+				"', data_criacao = \"" + cartaoCredito.getDataCriacao() + 
+				"\", descricao = \"" + cartaoCredito.getDescricao() + 
+				"\", nome_no_cartao = \"" + cartaoCredito.getNomeNoCartao() +
+				"\", data_validade = \"" + cartaoCredito.getDataValidade() +
+				"\", plafond_mensal = \"" + String.valueOf(cartaoCredito.getPlafondMensal()) +
+				"\", plafond_disponivel = \"" + String.valueOf(cartaoCredito.getPlafondDisponivel()) +
+				"\", data_limite_pagamento = \"" + cartaoCredito.getDataLimitePagamento() +
+				"\", dia_inicio_extrato = \"" + String.valueOf(cartaoCredito.getDiaInicioExtrato()) +
+				"\" WHERE cartao_id = \"" + Integer.toString(cartaoCredito.getCartaoID()) + "\"";
+
+		dbutilities.ExecuteSqlStatement(cmdSql);
+
+		System.out.println("O registo foi alterado com sucesso.");
+
+		dbutilities.DisconnectFromDB();
+
 	}
 
 	@Override

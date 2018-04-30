@@ -131,6 +131,7 @@ CREATE TABLE `movimentos` (
   `descricao` varchar(45) DEFAULT NULL,
   `ref_agencia_id` int(11) DEFAULT NULL,
   `ref_numero_conta` int(11) DEFAULT NULL,
+  `ref_numero_movimento` int(11) DEFAULT NULL,
   PRIMARY KEY (`agencia_id`,`numero_conta`,`numero_movimento`),
   KEY `fk_cartao_idx` (`cartao_id`),
   KEY `fk_contaorigem_idx` (`agencia_id`,`numero_conta`),
@@ -148,4 +149,4 @@ CREATE TABLE `movimentos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-29  0:23:19
+-- Dump completed on 2018-04-30  1:30:47

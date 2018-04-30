@@ -9,9 +9,10 @@ public class Movimento {
 	private String descricao;
 	private Cartao cartao;
 	private Conta contaReferencia;
+	private int refNumeroMovimento;
 	
 	public Movimento(int numeroMovimento, String dataMovimento, double valor, char tipo, String tipoDescr, String descricao,
-			Cartao cartao, Conta contaReferencia) {
+			Cartao cartao, Conta contaReferencia, int refNumeroMovimento) {
 		this.numeroMovimento = numeroMovimento;
 		this.dataMovimento = dataMovimento;
 		this.valor = valor;
@@ -20,6 +21,7 @@ public class Movimento {
 		this.descricao = descricao;
 		this.cartao = cartao;
 		this.contaReferencia = contaReferencia;
+		this.refNumeroMovimento = refNumeroMovimento;
 	}
 	public int getNumeroMovimento() {
 		return numeroMovimento;
@@ -69,11 +71,17 @@ public class Movimento {
 	public void setContaReferencia(Conta contaReferencia) {
 		this.contaReferencia = contaReferencia;
 	}
+	public int getRefNumeroMovimento() {
+		return refNumeroMovimento;
+	}
+	public void setRefNumeroMovimento(int refNumeroMovimento) {
+		this.refNumeroMovimento = refNumeroMovimento;
+	}
 	@Override
 	public String toString() {
 		return "Movimento [numeroMovimento=" + numeroMovimento + ", dataMovimento=" + dataMovimento + ", valor=" + valor
 				+ ", tipo=" + tipo + ", tipoDescr=" + tipoDescr + ", descricao=" + descricao + ", cartao=" + cartao.toString()
-				+ ", contaDestino=" + contaReferencia.toString() + "]";
+				+ ", contaDestino=" + contaReferencia.toString() + ", refNumeroMovimento=" + refNumeroMovimento + "]";
 	}
 	
 }

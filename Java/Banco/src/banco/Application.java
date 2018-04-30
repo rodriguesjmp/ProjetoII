@@ -21,7 +21,6 @@ import persistencia.CartaoDAO;
 import persistencia.ClienteDAO;
 import persistencia.ContaDAO;
 import persistencia.MovimentoDAO;
-import sun.util.resources.LocaleData;
 
 public class Application {
 
@@ -160,7 +159,7 @@ public class Application {
 		int selection;
 		String menuTitle = "====== MENU REGISTO DE OPERAÇÕES =====";
 		String[] opcoesMenu = {"Listar movimentos da conta", "Nova transferência", 
-				"Novo levantamento", "Novo depósito", "Avançar um período", "Menu anterior" };
+				"Novo levantamento", "Novo depósito", "Avançar um período", "Apagar um movimento", "Menu anterior" };
 		
 		do {
 			selection = displayMenu(menuTitle, opcoesMenu);
@@ -181,9 +180,12 @@ public class Application {
 			case 4:
 				avancaPeriodo();
 				break;
+			case 5:
+				deleteMovimento();
+				break;
 			default:
 				System.out.println("Opção inválida!");
-			case 5:
+			case 6:
 				break;
 			}
 		} while (selection != opcoesMenu.length - 1);
@@ -1055,17 +1057,22 @@ public class Application {
 		Scanner userInput = new Scanner(System.in);
 		
 		do {
-			System.out.println("Digite o numero (ID) do cartão da conta a movimentar (Digite 0 para cancelar):");
+			System.out.println("Digite o numero (ID) do cartão da conta a movimentar (Digite 0 para cancelar, -1 p/Consultar cartoes do cliente):");
 			cartaoID = Integer.parseInt(userInput.next());
+			
+			if (cartaoID == -1) {
+				listaCartoesCliente();
+			} else {
 
-			if (cartaoID != 0) {
-				// Vai ler o cartao
-				cartao = cartaoDao.consultaCartao(cartaoID);				
-				if (cartao == null) {
-					System.out.println("Cartão inexistente!");
-				} else if (cartao.getTipo() != 'D') {
-					System.out.println("O cartão selecionado não é um cartão de débito!");
-					cartao = null;
+				if (cartaoID != 0) {
+					// Vai ler o cartao
+					cartao = cartaoDao.consultaCartao(cartaoID);				
+					if (cartao == null) {
+						System.out.println("Cartão inexistente!");
+					} else if (cartao.getTipo() != 'D') {
+						System.out.println("O cartão selecionado não é um cartão de débito!");
+						cartao = null;
+					}
 				}
 			}
 		} while (cartao == null & cartaoID != 0);
@@ -1076,6 +1083,17 @@ public class Application {
 		}
 		
 		cartao.toString();
+		
+		System.out.println("------------------------------------------------------------------------------------------------");
+		System.out.println("Cartão selecionado: \tCartão Nº \t[" + cartao.getCartaoID() + "]");
+		System.out.println("\t\t\tConta Nº \t[" + cartao.getConta().getNumeroConta()+"]");
+		System.out.println("\t\t\tAgencia Nº \t["+cartao.getConta().getCliente().getAgencia().getAgenciaID() + "-" + cartao.getConta().getCliente().getAgencia().getNome()+"]");
+		System.out.println("\t\t\tCliente Nº \t["+cartao.getConta().getCliente().getNumeroCliente() + "],Nome [" + cartao.getConta().getCliente().getNome()+"]");
+		NumberFormat formata = NumberFormat.getCurrencyInstance();
+		String currency = formata.format(cartao.getConta().getSaldo());
+		System.out.println("\t\t\tSaldo Disponível[" + currency + "]");
+		System.out.println("------------------------------------------------------------------------------------------------");
+
 		return cartao;
 	}
 	
@@ -1109,7 +1127,7 @@ public class Application {
 		System.out.println("\t\t\tCliente ("+conta.getCliente().getNumeroCliente() + ") " + conta.getCliente().getNome()+".");
 		System.out.println("------------------------------------------------------------------------------------------------");
 		System.out.println("Resultados encontrados:");
-		System.out.println("NºMOVIM. TIPO-DESCR.\tDESCRIÇÃO\t\tVALOR\t\tCARTAO\tAGENCIA/CONTA REFERENCIA");
+		System.out.println("NºMOVIM. TIPO-DESCR.\tDESCRIÇÃO\t\tVALOR\t\tCARTAO\tREF:AGENCIA/CONTA/NºMOVIM.");
 		
 		MovimentoDAO movimentoDao = new MovimentoDAO();
 		List<Movimento> movimentos = movimentoDao.listaMovimentosConta(agenciaID, numeroConta);
@@ -1139,6 +1157,8 @@ public class Application {
 				sbmov.append(String.valueOf(movimento.getContaReferencia().getCliente().getAgencia().getAgenciaID()));
 				sbmov.append("/");
 				sbmov.append(String.valueOf(movimento.getContaReferencia().getNumeroConta()));
+				sbmov.append("/");
+				sbmov.append(String.valueOf(movimento.getRefNumeroMovimento()));
 			} else {
 				sbmov.append("\t-");
 			}
@@ -1167,6 +1187,77 @@ public class Application {
 	 */
 	public static void criaLevantamento() {
 		System.out.println("\n[6-2.Novo levantamento] : opção ainda não implementada...\n\n");
+		double valor;
+		String descricao, dadosOkay; 
+		
+		System.out.println("\n[6-2.Novo levantamento]");
+
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("---------------------");
+		System.out.println("DADOS DO LEVANTAMENTO");
+		System.out.println("---------------------");
+
+		Cartao cartao = selecionaCartao();
+		
+		if (cartao == null) {
+			return;
+		}
+		
+		do {
+			do {
+				System.out.println("Digite o valor do levantamento: ");
+				valor = parseDouble(userInput.nextLine());
+			} while (valor <= 0);
+
+			System.out.println("Digite uma descrição para este movimento (opcional): ");
+			descricao = userInput.nextLine();
+			
+			System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar. (\"C\" para cancelar)");
+			dadosOkay = userInput.nextLine();
+		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
+
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+
+		boolean isLevantaOk = cartao.levanta(valor);
+		if (isLevantaOk == false) {
+			System.out.println("Operação cancelada! Verifique os dados p.f.");
+			userInput.nextLine();
+			return;			
+		}
+		
+		//System.out.println(cartao.toString());
+		/*
+		 * atualiza na conta o saldo e o ultimo movimento
+		 */
+		int agenciaID = cartao.getConta().getCliente().getAgencia().getAgenciaID();
+		int numeroConta = cartao.getConta().getNumeroConta();
+		
+		int ultimoMovimento = cartao.getConta().getUtimoMovimento() + 1;
+		double saldo = cartao.getConta().getSaldo();
+		
+		ContaDAO contaDao = new ContaDAO();		
+		contaDao.atualizaSaldoUltimoMovimento(agenciaID, numeroConta, saldo, ultimoMovimento);
+		/*
+		 * criar aqui o movimento
+		 */
+		cartao.getConta().setUltimoMovimento(ultimoMovimento);
+		
+		LocalDateTime today = LocalDateTime.now();
+		String dataMovimento = today.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		Movimento movimento = new Movimento(ultimoMovimento, dataMovimento, valor, 'D', "LEV", descricao, cartao, null, -1);
+		
+		MovimentoDAO movimentoDao = new MovimentoDAO();
+		movimentoDao.insereMovimento(movimento);
+		
+		NumberFormat formata = NumberFormat.getCurrencyInstance();
+		String currency = formata.format(cartao.getConta().getSaldo());
+		System.out.println("\n****************************************");
+		System.out.println("NOVO SALDO : " + currency);
+		System.out.println("****************************************\n");
 	}
 
 	/*
@@ -1191,9 +1282,11 @@ public class Application {
 		}
 		
 		do {
-			System.out.println("Digite o valor a depositar: ");
-			valor = Double.parseDouble(userInput.nextLine());
-
+			do {
+				System.out.println("Digite o valor a depositar: ");
+				valor = parseDouble(userInput.nextLine());
+			} while (valor <= 0);
+			
 			System.out.println("Digite uma descrição para este movimento (opcional): ");
 			descricao = userInput.nextLine();
 			
@@ -1201,6 +1294,11 @@ public class Application {
 			dadosOkay = userInput.nextLine();
 		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
 
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
 		cartao.deposita(valor);
 		System.out.println(cartao.toString());
 		/*
@@ -1221,18 +1319,37 @@ public class Application {
 		
 		LocalDateTime today = LocalDateTime.now();
 		String dataMovimento = today.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-		Movimento movimento = new Movimento(ultimoMovimento, dataMovimento, valor, 'C', "DEP", descricao, cartao, null);
+		Movimento movimento = new Movimento(ultimoMovimento, dataMovimento, valor, 'C', "DEP", descricao, cartao, null, -1);
 		
 		MovimentoDAO movimentoDao = new MovimentoDAO();
 		movimentoDao.insereMovimento(movimento);
+		
+		NumberFormat formata = NumberFormat.getCurrencyInstance();
+		String currency = formata.format(cartao.getConta().getSaldo());
+		System.out.println("\n****************************************");
+		System.out.println("NOVO SALDO : " + currency);
+		System.out.println("****************************************\n");
 	}
 	
+	private static double parseDouble(String s){
+	    if(s == null || s.isEmpty()) 
+	        return 0.0;
+	    else
+	        return Double.parseDouble(s);
+	}	
 	
 	/*
 	 * 6.4 - Avancar um periodo
 	 */
 	public static void avancaPeriodo() {
 		System.out.println("\n[6-4.Avancar um periodo] : opção ainda não implementada...\n\n");
+	}
+
+	/*
+	 * 6.5 - Apagar um movimento
+	 */
+	public static void deleteMovimento() {
+		System.out.println("\n[6-5.Apagar um movimento] : opção ainda não implementada...\n\n");
 	}
 
 
