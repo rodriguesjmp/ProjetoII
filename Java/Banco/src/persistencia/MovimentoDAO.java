@@ -23,9 +23,13 @@ public class MovimentoDAO implements IMovimentoDAO {
 		sb.append(String.valueOf(movimento.getCartao().getConta().getNumeroConta()));
 		sb.append("\", \"");
 		sb.append(String.valueOf(movimento.getNumeroMovimento()));		
-		sb.append("\", \"");
-		sb.append(String.valueOf(movimento.getCartao().getCartaoID()));
-		sb.append("\", \"");
+		if (movimento.getCartao().getCartaoID() == 0) {
+			sb.append("\", null, \"");
+		} else {
+			sb.append("\", \"");
+			sb.append(String.valueOf(movimento.getCartao().getCartaoID()));
+			sb.append("\", \"");
+		}
 		sb.append(movimento.getDataMovimento());
 		sb.append("\", '");
 		sb.append(movimento.getTipo());

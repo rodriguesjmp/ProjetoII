@@ -94,7 +94,8 @@ public class Cartao {
 	public boolean tranfere(Conta contaDestino, double valor) {
 		boolean isMovementOkay = false;
 		
-		if(this.conta.equals(contaDestino)) {
+		if(this.conta.getCliente().getAgencia().getAgenciaID() == contaDestino.getCliente().getAgencia().getAgenciaID() &&
+				this.conta.getNumeroConta() == contaDestino.getNumeroConta()) {
 			System.out.println("Não pode transferir dinheiro para a própria conta...!");
 		} else {
 			isMovementOkay = levanta(valor);

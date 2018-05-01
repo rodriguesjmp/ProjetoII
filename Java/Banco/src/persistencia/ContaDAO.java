@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logica.Agencia;
 import logica.Cliente;
 import logica.Conta;
 import logica.ContaAPrazo;
@@ -85,12 +84,25 @@ public class ContaDAO implements IContaDAO {
 	
 	@Override
 	public Conta consultaConta(int agenciaID, int numeroConta) {
-		DbUtilities dbutilities = new DbUtilities();
 		String stmt = "SELECT * FROM jmpr1525_Banco.contas WHERE agencia_id = " + agenciaID + " AND numero_conta = " + numeroConta;
+		return readConta(stmt);
+	}
+	
+	@Override
+	public Conta consultaConta(int agenciaID, int numeroCliente, String tipo) {
+		String stmt = "SELECT * FROM jmpr1525_Banco.contas WHERE agencia_id = " + agenciaID + 
+				" AND numero_cliente = " + numeroCliente + " AND tipo = \"" + tipo + "\"";
+		return readConta(stmt);
+	}
+	
+	private Conta readConta(String stmt) {
+		DbUtilities dbutilities = new DbUtilities();
 		ResultSet rs = dbutilities.ReadRecords(stmt);
 		try {
 			if (rs.next()) {
 				do {
+					int agenciaID = rs.getInt(1);
+					int numeroConta = rs.getInt(2);
 					int numeroCliente = rs.getInt(3);
 					String tipo = rs.getString(4);
 					String descricao = rs.getString(5);

@@ -10,6 +10,7 @@ public interface IContaDAO {
 	public List<Conta> listarContas();
 	public List<Conta> listarContas(int agenciaID, int numeroCliente);
 	public Conta consultaConta(int agenciaID, int numeroConta);
+	public Conta consultaConta(int agenciaID, int numeroConta, String tipo);
 	public void insereConta(Conta conta);
 	public void insereConta(ContaAPrazo contaPrazo);
 	public void insereConta(ContaPoupanca contaPoupanca);

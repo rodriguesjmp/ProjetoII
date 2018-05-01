@@ -1,25 +1,38 @@
 package logica;
 
 public class CartaoCredito extends Cartao {
-	private String dataLimitePagamento;
+	private int diasPrazoPagamento;
 	private int diaInicioExtrato;
 	private double plafondMensal;
 	private double plafondDisponivel;
 	
-	public CartaoCredito(int cartaoID, String descricao,  String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta, String dataLimitePagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
+	public CartaoCredito(int cartaoID, String descricao,  String nomeNoCartao, String dataCriacao, String dataValidade, char tipo, Conta conta, 
+			int diasPrazoPagamento, int diaInicioExtrato, double plafondMensal, double plafond_disponivel) {
+		
 		super(cartaoID, descricao, nomeNoCartao, dataCriacao, dataValidade, tipo, conta);
-		this.dataLimitePagamento = dataLimitePagamento;
+		
+		if (diasPrazoPagamento <= 0) {
+			this.diasPrazoPagamento = 10;
+		} else {
+			this.diasPrazoPagamento = diasPrazoPagamento;
+		}
 		this.diaInicioExtrato = diaInicioExtrato;
-		this.plafondMensal = plafondMensal;
-		this.plafondDisponivel = plafond_disponivel;
+		if (plafondMensal == 0.0) {
+			this.plafondMensal = 500.0;
+			this.plafondDisponivel = 500.0;
+		} else {
+			this.plafondMensal = plafondMensal;
+			this.plafondDisponivel = plafond_disponivel;
+		}
+		
 	}
 
-	public String getDataLimitePagamento() {
-		return dataLimitePagamento;
+	public int getDiasPrazoPagamento() {
+		return diasPrazoPagamento;
 	}
 
-	public void setDataLimitePagamento(String dataLimitePagamento) {
-		this.dataLimitePagamento = dataLimitePagamento;
+	public void setdiasPrazoPagamento(int diasPrazoPagamento) {
+		this.diasPrazoPagamento = diasPrazoPagamento;
 	}
 
 	public int getDiaInicioExtrato() {

@@ -231,8 +231,14 @@ public class Application {
 		System.out.println("INSERIR NOVA AGÊNCIA");
 		System.out.println("--------------------");
 		
-		System.out.println("Digite o numero da agência:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		do {
+			System.out.println("Digite o numero da agência (Digite 0 para cancelar):");
+			agenciaID = parseInteger(userInput.nextLine());
+		} while (agenciaID < 0);
+
+		if (agenciaID == 0) {
+			return;
+		}
 		
 		System.out.println("Digite o nome da agência:");
 		nome = userInput.nextLine();
@@ -282,7 +288,7 @@ public class Application {
 		Scanner userInput = new Scanner(System.in);
 		
 		System.out.println("Digite o numero da agência:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		agenciaID = parseInteger(userInput.nextLine());
 
 		Agencia agencia;
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
@@ -328,8 +334,15 @@ public class Application {
 		
 		Scanner userInput = new Scanner(System.in);
 		
-		System.out.println("Digite o numero da agência a eliminar:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		do {
+			System.out.println("Digite o numero da agência a eliminar (Digite 0 para cancelar):");
+			agenciaID = parseInteger(userInput.nextLine());
+		} while (agenciaID < 0);
+
+		if (agenciaID == 0) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}		
 
 		Agencia agencia;
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
@@ -375,7 +388,7 @@ public class Application {
 		Scanner userInput = new Scanner(System.in);
 		
 		System.out.println("Digite o numero da agência:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		agenciaID = parseInteger(userInput.nextLine());
 
 		Agencia agencia;
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
@@ -448,7 +461,7 @@ public class Application {
 		
 		do {
 			System.out.println("Digite o numero da agência (Digite 0 para cancelar):");
-			agenciaID = Integer.parseInt(userInput.nextLine());
+			agenciaID = parseInteger(userInput.nextLine());
 
 			if (agenciaID != 0) {
 				agencia = agenciaDao.consultaAgencia(agenciaID);				
@@ -466,8 +479,10 @@ public class Application {
 		}
 
 		do {
-			System.out.println("Digite o numero de cliente:");
-			numeroCliente = Integer.parseInt(userInput.nextLine());
+			do {
+				System.out.println("Digite o numero de cliente:");
+				numeroCliente = parseInteger(userInput.nextLine());
+			}while (numeroCliente <= 0);
 
 			do {
 				System.out.println("Digite o tipo de cliente (\"N\"-Normal, \"V\"-VIP): ");
@@ -519,7 +534,7 @@ public class Application {
 		/*
 		 * automaticamente vai atribuir uma conta à ordem ao cliente criado
 		 */
-		criaContaOrdem(cliente);
+		criaContaOrdem(cliente, "À Ordem Base", true);
 	
 	}
 	
@@ -648,17 +663,25 @@ public class Application {
 		System.out.println("              DADOS DO CLIENTE A ELIMINAR              ");
 		System.out.println("-------------------------------------------------------");
 		do {
-			System.out.println("Digite o numero da agência  (Digite 0 para cancelar):");
-			agenciaID = Integer.parseInt(userInput.nextLine());
+			do {
+				System.out.println("Digite o numero da agência (Digite 0 para cancelar):");
+				agenciaID = parseInteger(userInput.nextLine());
+			} while (agenciaID < 0);
 
 			if (agenciaID != 0) {
-				System.out.println("Digite o numero de cliente:");
-				numeroCliente = Integer.parseInt(userInput.nextLine());
+				do {
+					System.out.println("Digite o numero de cliente (Digite 0 para cancelar):");
+					numeroCliente = parseInteger(userInput.nextLine());
+				} while (numeroCliente < 0);
 
-				// Vai ler o cliente
-				cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);				
-				if (cliente == null) {
-					System.out.println("Cliente não encontrado!");
+				if (numeroCliente != 0) {
+					// Vai ler o cliente
+					cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
+					if (cliente == null) {
+						System.out.println("Cliente não encontrado!");
+					}
+				} else {
+					agenciaID = 0;
 				}
 			}
 		} while (cliente == null & agenciaID != 0);
@@ -683,7 +706,7 @@ public class Application {
 	/*
 	 * CRIA CONTA À ORDEM (criada automáticamente a quando da criacao de um cliente)
 	 */
-	public static void criaContaOrdem(Cliente cliente) {
+	public static void criaContaOrdem(Cliente cliente, String descricao, boolean criarCartao) {
 		// vai à tabela de agencias buscar a ultimaconta e atualiza-a
 		
 		AgenciaDAO agenciaDao  =  new AgenciaDAO();
@@ -697,7 +720,7 @@ public class Application {
 		 * Criar uma conta à ordem
 		 */
 		LocalDate dataHoje = LocalDate.now();
-		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", "Conta à ordem base", dataHoje.toString(), 0.0, 0);
+		Conta conta = new Conta(ultimaConta, cliente, "ORDEM", descricao, dataHoje.toString(), 0.0, 0);
 
 		ContaDAO contaDao = new ContaDAO();
 		contaDao.insereConta(conta);
@@ -705,16 +728,200 @@ public class Application {
 		System.out.println(conta.toString());
 
 		/*
-		 * deve atribuir automáticamente tambem um cartao de débito
+		 * deve atribuir automáticamente tambem um cartao de débito (se vem da criacao de cliente)
 		 */
-		criaCartaoDebito(conta);
+		if (criarCartao) {
+			criaCartaoDebito(conta);
+		}
 	}
 
 	/*
 	 * 2-02.Cria conta (poupança, prazo ou investimento)
 	 */
 	public static void insereConta() {
-		System.out.println("\n[2-02.Criar conta] : opção ainda não implementada...\n\n");
+		int agenciaID = 0, numeroCliente = 0, numeroConta = 0;
+		String selTipo, descricao, dataCriacao;
+		String tipo ="";
+		double saldo, valorInicial = 0.0;
+		int prazoAnos = 0, ultimoMovimento = 0;
+		String dadosOkay;
+		
+		System.out.println("\n[2-02.Criar uma conta]");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("--------------------");
+		System.out.println("CRIAR UMA NOVA CONTA");
+		System.out.println("--------------------");
+
+		// *** Selecionar o cliente da nova conta
+		ClienteDAO clienteDao  =  new ClienteDAO();
+		Cliente cliente = null;
+		
+		do {
+			do {
+				System.out.println("Digite o numero da agência (Digite 0 para cancelar, -1 p/Ver lista cliente da agencia):");
+				agenciaID = parseInteger(userInput.nextLine());
+				if (agenciaID == -1) {
+					consultaClientesAgencia();
+				}
+
+			} while (agenciaID < 0);
+
+			if (agenciaID != 0) {
+				do {
+					System.out.println("Digite o numero de cliente (Digite 0 para cancelar):");
+					numeroCliente = parseInteger(userInput.nextLine());
+				} while (numeroCliente < 0);
+
+				if (numeroCliente != 0) {
+					// Vai ler o cliente
+					cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
+					if (cliente == null) {
+						System.out.println("Cliente não encontrado!");
+					}
+				} else {
+					agenciaID = 0;
+				}
+			}
+		} while (cliente == null & agenciaID != 0);
+
+		if (agenciaID == 0) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
+		
+		System.out.println("--------------------------------------------------");
+		System.out.println("Cliente selecionado:");
+		displayClienteFull(cliente);
+		
+		ContaDAO contaDao = new ContaDAO();
+		Conta conta = null;
+		ContaPoupanca contaPoupanca = null;
+		ContaAPrazo contaAPrazo = null;
+		
+		// Obriga a que cada cliente tenha uma conta à ordem, antes de qualquer outra conta
+		// por isso vai ler se existe uma.
+		conta = contaDao.consultaConta(agenciaID, numeroCliente, "ORDEM");
+		
+		if (conta != null) {
+			NumberFormat formata = NumberFormat.getCurrencyInstance();
+			String currency = formata.format(conta.getSaldo());
+			System.out.println("Saldo disponível da conta à ordem: "+ currency);
+		}
+		System.out.println("--------------------------------------------------");
+		System.out.println("Preenchimento dos dados da conta:");
+		
+		do {
+			System.out.println("Selecione o tipo de conta (0-\"À ordem\", 1-\"Poupança\", 2-\"A prazo\"): ");
+			selTipo = userInput.nextLine();
+		} while (!selTipo.matches("0|1|2"));
+
+		switch (selTipo) {
+		case "0":
+			tipo = "ORDEM";
+			break;
+		case "1":
+			tipo = "POUPANCA";
+			break;
+		case "2":
+			tipo = "APRAZO";
+			break;
+		}
+
+		if ("ORDEM".equals(tipo) && conta != null) {
+			/* Se quer criar uma conta do tipo = "ORDEM", verifica se ja tem uma, pois
+			 * cada cliente só pode ter uma conta à ordem.
+			 */
+				System.out.println("Para o cliente selecionado, já existe uma conta à ordem! Vou terminar.");
+				userInput.nextLine();
+				return;
+		} else if ("APRAZO".equals(tipo) && conta.getSaldo() <= 0) {
+			// Para criar uma conta a prazo, tem que ter obrigatóriament saldo positivo
+			// na conta à ordem, para poder transferir o valor inicial da conta a prazo.
+			System.out.println("Primeiro deposite fundos na sua conta à ordem para poder criar uma conta a prazo!\nVou terminar!");
+			userInput.nextLine();
+			return;
+		}
+
+		System.out.println("Digite uma descrição para esta conta: ");
+		descricao = userInput.nextLine();
+
+		if ("APRAZO".equals(tipo)) {
+			do {
+				System.out.println("Selecione o prazo em anos desta conta (Mimino 1 e máximo 5 anos): ");
+				prazoAnos = parseInteger(userInput.nextLine());
+			} while ((prazoAnos <= 0) || (prazoAnos > 5));
+
+			do {
+				System.out.println("Digite o montante de constituição da conta: ");
+				valorInicial = parseDouble(userInput.nextLine());
+				if(valorInicial > conta.getSaldo()) {
+					System.out.println("A sua conta à ordem não tem saldo suficiente! (Saldo disponível:"+conta.getSaldo()+")");
+				}
+			} while ((valorInicial <= 0.0)|| (valorInicial > conta.getSaldo()));
+		}
+
+		System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar a criação da conta.");
+		dadosOkay = userInput.nextLine();
+		if (!"S".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("\nOperação interrompida pelo utilizador!\n");
+			return;
+		}
+	
+		ultimoMovimento = 0;
+		saldo = 0.0;
+		LocalDate dataHoje = LocalDate.now();
+		dataCriacao = dataHoje.toString();
+
+		if ("ORDEM".equals(tipo)) {
+			criaContaOrdem(cliente, descricao, false);
+			System.out.println("AVISO IMPORTANTE: Não se esqueça de associar um cartão de débito a esta conta!");
+			userInput.nextLine();
+			return;
+		}
+				
+		// vai à tabela de agencias buscar o numero da ultimaconta e atualiza-o		
+		AgenciaDAO agenciaDao  =  new AgenciaDAO();
+		int ultimaConta;
+		
+		cliente.setAgencia(agenciaDao.consultaAgencia(cliente.getAgencia().getAgenciaID()));
+		ultimaConta = cliente.getAgencia().incrementaUltimaConta();
+		agenciaDao.atualizaUltimaConta(cliente.getAgencia().getAgenciaID(), ultimaConta);
+		
+		numeroConta = ultimaConta;
+
+		if ("POUPANCA".equals(tipo)) {
+			contaPoupanca = new ContaPoupanca(numeroConta, cliente, tipo, descricao, dataCriacao, saldo, ultimoMovimento);
+			contaDao.insereConta(contaPoupanca);
+			System.out.println(contaPoupanca.toString());
+		} else if ("APRAZO".equals(tipo)) {
+			// Para o Deposito inicial precisa de ter um cartao associado ao movimento
+			Cartao cartao = null;
+			do {
+				cartao = selecionaCartao();
+				if (cartao == null) {
+					System.out.println("Nenhum cartão selecionado! Operação interrompida: nenhuma conta criada!");
+					return;
+				}
+			    if (cartao.getConta().getCliente().getAgencia().getAgenciaID() != cliente.getAgencia().getAgenciaID() ||
+					cartao.getConta().getCliente().getNumeroCliente() != cliente.getNumeroCliente()) {
+			    	System.out.println("O cartão selecionado não pertence ao cliente atual!");
+			    }
+			} while (cartao.getConta().getCliente().getAgencia().getAgenciaID() != cliente.getAgencia().getAgenciaID() ||
+					cartao.getConta().getCliente().getNumeroCliente() != cliente.getNumeroCliente());
+				
+			
+			contaAPrazo = new ContaAPrazo(numeroConta, cliente, tipo, descricao, dataCriacao, saldo, ultimoMovimento, prazoAnos);
+			contaDao.insereConta(contaAPrazo);
+			System.out.println(contaAPrazo.toString());
+			/*
+			 * FAZ AQUI O DEPOSITO INICIAL (TRANSFERENCIA DA CONTA ORDEM PARA ESTA CONTA A PRAZO)
+			 */
+			criaTransferencia(cartao, contaAPrazo, "TRFOUT", valorInicial, "ABERTURA");
+		}
+
 	}
 
 	/*
@@ -857,16 +1064,17 @@ public class Application {
 		System.out.println("\t\t\tAgencia "+cliente.getAgencia().getAgenciaID() + "-" + cliente.getAgencia().getNome()+".");
 		System.out.println("----------------------------------------------------------------------");
 		System.out.println("Resultados encontrados:");
-		System.out.println("N.CONTA\tTIPO\tDESCRIÇÃO\t\t\tSALDO");
+		System.out.println("NºCONTA\tTIPO    \tDESCRIÇÃO\t\t\tSALDO");
 		
 		ContaDAO contaDao = new ContaDAO();
 		List<Conta> contas = contaDao.listarContas(agenciaID, numeroCliente);
 
 		for( Conta conta: contas) {
-			System.out.println(conta.getNumeroConta()+"\t"+conta.getTipo()+"\t"+conta.getDescricao()+"\t\t"+conta.getSaldo());
+			System.out.println(conta.getNumeroConta()+"\t"+conta.getTipo()+"\t"+conta.getDescricao()+"\t\t\t"+conta.getSaldo());
 //			System.out.println("----------------------------------------------------------------------");
 		}
 		
+		System.out.println("----------------------------------------------------------------------");
 		System.out.println("Fim da lista. Prima Enter para continuar...");
 		userInput.nextLine();
 		System.out.println();
@@ -885,10 +1093,10 @@ public class Application {
 		Scanner userInput = new Scanner(System.in);
 		
 		System.out.println("Digite o numero da agência:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		agenciaID = parseInteger(userInput.nextLine());
 
 		System.out.println("Digite o numero de cliente:");
-		numeroCliente = Integer.parseInt(userInput.nextLine());
+		numeroCliente = parseInteger(userInput.nextLine());
 
 		ClienteDAO clienteDao  =  new ClienteDAO();
 		Cliente cliente = clienteDao.consultaCliente(agenciaID, numeroCliente);
@@ -922,6 +1130,7 @@ public class Application {
 //			System.out.println("----------------------------------------------------------------------");
 		}
 		
+		System.out.println("----------------------------------------------------------------------");
 		System.out.println("Fim da lista. Prima Enter para continuar...");
 		userInput.nextLine();
 		System.out.println();
@@ -961,10 +1170,124 @@ public class Application {
 	 * 2-06.Cria cartao 
 	 */
 	public static void insereCartao() {
-		System.out.println("\n[2-06.Criar cartao] : opção ainda não implementada...\n\n");
+		int agenciaID, numeroConta;
+		char tipo;
+		String selTipo;
+		String descricao;
+		String nomeNoCartao;
+		double plafondMensal = 0.0;
+		double plafondDisponivel = 0.0;
+		int diaInicioExtrato = 0;
+		int condicoesPagamento = 0;
+		String dadosOkay;
+		
+		System.out.println("\n[2-06.Criar cartao]");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("-------------------");
+		System.out.println("INSERIR NOVO CARTÃO");
+		System.out.println("-------------------");
+
+		ContaDAO contaDao  =  new ContaDAO();
+		Conta conta = null;
+		
+		do {
+			do {
+				do {
+					System.out.println("Digite o numero da agência (Digite 0 para Cancelar):");
+					agenciaID = parseInteger(userInput.nextLine());
+				} while (agenciaID < 0);
+
+				if (agenciaID == 0) {
+					System.out.println("Operação cancelada pelo utilizador.");
+					return;
+				}
+
+				do {
+					System.out.println("Digite o numero da conta:");
+					numeroConta = parseInteger(userInput.nextLine());
+				} while (numeroConta <= 0);
+
+				conta = contaDao.consultaConta(agenciaID, numeroConta);
+
+				if (conta == null) {
+					System.out.println("Conta não encontrada!");
+				}
+
+			} while (agenciaID != 0 && conta == null);
+
+			System.out.println("------------------------------------------------------------------------------------------------");
+			System.out.println("Conta selecionada:\tConta Nº " + conta.getNumeroConta()+ " - " + conta.getDescricao() +
+					" ("+ conta.getTipo() + ")\t(Saldo disponível: "+conta.getSaldo()+")");
+			System.out.println("\t\t\tAgencia "+conta.getCliente().getAgencia().getAgenciaID() + " - " + conta.getCliente().getAgencia().getNome()+".");
+			System.out.println("\t\t\tCliente "+conta.getCliente().getNumeroCliente() + " - " + conta.getCliente().getNome()+".");
+			System.out.println("------------------------------------------------------------------------------------------------");
+
+			do {
+				System.out.println("Selecione o tipo do cartão (Digite \"C\" para Crédito, \"D\" para Débito): ");
+				selTipo = userInput.nextLine().trim();
+			} while (!"C".equalsIgnoreCase(selTipo) && !"D".equalsIgnoreCase(selTipo));
+			tipo = selTipo.toUpperCase().charAt(0);
+
+			System.out.println("Digite uma descrição para o novo cartão (Deixe em branco p/descrição predefinida): ");
+			descricao = userInput.nextLine();
+			if (descricao.isEmpty()) {
+				if (tipo == 'D') {
+					descricao = "CARTÃO DÉBITO";
+				} else {
+					descricao = "CARTÃO CRÉDITO";
+				}
+				System.out.println("Descrição do novo cartão: \"" + descricao + "\".");
+			}
+
+			System.out.println("Digite o nome do portador do cartão: ");
+			nomeNoCartao = userInput.nextLine();
+			
+			if (tipo == 'C') {
+				System.out.println("Digite o valor do plafond mensal: ");
+				plafondMensal = parseDouble(userInput.nextLine());
+				plafondDisponivel = plafondMensal;
+				
+				do {
+					System.out.println("Digite o dia do mês em que inicia cada extrato [1-28]: ");
+					diaInicioExtrato = parseInteger(userInput.nextLine());
+				} while (diaInicioExtrato <= 0 || diaInicioExtrato > 28);
+
+				System.out.println("Digite qual o prazo de pagamento de extrato do novo cartão (em dias): ");
+				condicoesPagamento = parseInteger(userInput.nextLine());
+			}
+
+			System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar, \"C\" para cancelar.");
+			dadosOkay = userInput.nextLine();
+		} while (!"S".equalsIgnoreCase(dadosOkay) && !"C".equalsIgnoreCase(dadosOkay));
+
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+		
+		LocalDate dataHoje = LocalDate.now();
+		LocalDate dataValidadeTemp = dataHoje.plusYears(2);
+		String dataValidade = String.valueOf(dataValidadeTemp.getYear() + "-" + dataValidadeTemp.getMonthValue() + "-"+ dataValidadeTemp.lengthOfMonth());
+
+		CartaoDAO cartaoDao = new CartaoDAO();
+		if (tipo == 'D') {
+			Cartao cartao = new Cartao(0, "",nomeNoCartao, dataHoje.toString(), dataValidade, tipo, conta);	
+			int lastId = cartaoDao.insereCartao(cartao);
+			cartao.setCartaoID(lastId);
+			System.out.println(cartao.toString());			
+		} else {
+			CartaoCredito cartaoCredito = new CartaoCredito(0, descricao, nomeNoCartao, dataHoje.toString(), dataValidade, tipo, conta,
+					condicoesPagamento, diaInicioExtrato, plafondMensal, plafondDisponivel);	
+			int lastId = cartaoDao.insereCartao(cartaoCredito);
+			cartaoCredito.setCartaoID(lastId);
+			System.out.println(cartaoCredito.toString());
+		}
+
 	}
 
-	/*
+	/* 
 	 * 2-08.Altera dados do cartao
 	 */
 	public static void updateCartao() {
@@ -989,8 +1312,11 @@ public class Application {
 		System.out.println("               DADOS DO CARTÃO A ELIMINAR              ");
 		System.out.println("-------------------------------------------------------");
 		do {
-			System.out.println("Digite o numero (ID) do cartão a eliminar (Digite 0 para cancelar):");
-			cartaoID = Integer.parseInt(userInput.nextLine());
+			do {
+				System.out.println("Digite o numero (ID) do cartão a eliminar (Digite 0 para cancelar):");
+				cartaoID = parseInteger(userInput.nextLine());
+			} while (cartaoID < 0);
+
 
 			if (cartaoID != 0) {
 				// Vai ler o cartao
@@ -1042,7 +1368,7 @@ public class Application {
 		String plafondMensal = formata.format(cartaoCredito.getPlafondMensal());
 		String plafondDisponivel = formata.format(cartaoCredito.getPlafondDisponivel());
 		System.out.println("  Plafond : " + plafondMensal + "(Mensal)\t" + plafondDisponivel + "(Disponivel)");
-		System.out.println("LimitePag.: " + cartaoCredito.getDataLimitePagamento());
+		System.out.println("Condições pagamento: " + cartaoCredito.getDiasPrazoPagamento() + " dias após emissão extrato.");
 		System.out.println("Dia de inicio do extrato é a " + cartaoCredito.getDiaInicioExtrato() + " de cada mês.");
 	}
 	
@@ -1058,7 +1384,7 @@ public class Application {
 		
 		do {
 			System.out.println("Digite o numero (ID) do cartão da conta a movimentar (Digite 0 para cancelar, -1 p/Consultar cartoes do cliente):");
-			cartaoID = Integer.parseInt(userInput.next());
+			cartaoID = parseInteger(userInput.next());
 			
 			if (cartaoID == -1) {
 				listaCartoesCliente();
@@ -1107,11 +1433,15 @@ public class Application {
 		
 		Scanner userInput = new Scanner(System.in);
 		
-		System.out.println("Digite o numero da agência:");
-		agenciaID = Integer.parseInt(userInput.nextLine());
+		do {
+			System.out.println("Digite o numero da agência:");
+			agenciaID = parseInteger(userInput.nextLine());
+		} while (agenciaID <= 0);
 
-		System.out.println("Digite o numero da conta:");
-		numeroConta = Integer.parseInt(userInput.nextLine());
+		do {
+			System.out.println("Digite o numero da conta:");
+			numeroConta = parseInteger(userInput.nextLine());
+		} while (numeroConta <= 0);
 
 		ContaDAO contaDao  =  new ContaDAO();
 		Conta conta = contaDao.consultaConta(agenciaID, numeroConta);
@@ -1122,9 +1452,10 @@ public class Application {
 		}
 
 		System.out.println("------------------------------------------------------------------------------------------------");
-		System.out.println("Lista de movimentos da conta No.\t" + conta.getNumeroConta());
-		System.out.println("\t\t\tAgencia "+conta.getCliente().getAgencia().getAgenciaID() + "-" + conta.getCliente().getAgencia().getNome()+".");
-		System.out.println("\t\t\tCliente ("+conta.getCliente().getNumeroCliente() + ") " + conta.getCliente().getNome()+".");
+		System.out.println("Lista de movimentos da conta Nº " + conta.getNumeroConta()+ " - " + conta.getDescricao() +
+				" ("+ conta.getTipo() + ")\t(Saldo disponível: "+conta.getSaldo()+")");
+		System.out.println("\t\t\tAgencia "+conta.getCliente().getAgencia().getAgenciaID() + " - " + conta.getCliente().getAgencia().getNome()+".");
+		System.out.println("\t\t\tCliente "+conta.getCliente().getNumeroCliente() + " - " + conta.getCliente().getNome()+".");
 		System.out.println("------------------------------------------------------------------------------------------------");
 		System.out.println("Resultados encontrados:");
 		System.out.println("NºMOVIM. TIPO-DESCR.\tDESCRIÇÃO\t\tVALOR\t\tCARTAO\tREF:AGENCIA/CONTA/NºMOVIM.");
@@ -1137,9 +1468,9 @@ public class Application {
 			sbmov.append(String.valueOf(movimento.getNumeroMovimento()));
 			sbmov.append("\t ");
 			sbmov.append(movimento.getTipo());
-			sbmov.append("-");
+			sbmov.append(" - ");
 			sbmov.append(movimento.getTipoDescr());
-			sbmov.append("\t\t");
+			sbmov.append("\t");
 			sbmov.append(movimento.getDescricao());
 			sbmov.append("\t\t");
 			NumberFormat formata = NumberFormat.getCurrencyInstance();
@@ -1178,7 +1509,244 @@ public class Application {
 	 * 6.1 - Nova transferencia
 	 */
 	public static void criaTransferencia() {
-		System.out.println("\n[6-1.Nova transferencia] : opção ainda não implementada...\n\n");
+		double valor = 0.0;
+		int refAgenciaID = 0;
+		int refNumeroConta = 0;
+		String descricao = "TRF";
+		String dadosOkay; 
+		
+		System.out.println("\n[6-1.Nova transferencia]");
+
+		Scanner userInput = new Scanner(System.in);
+		
+		System.out.println("---------------------");
+		System.out.println("DADOS DA TRANSFERENCIA");
+		System.out.println("---------------------");
+
+		Cartao cartao = selecionaCartao();
+		if (cartao == null) {
+			return;
+		}
+		
+		System.out.println("A conta do cartão selecionado é a conta de destino ? Digite \"s\" ou \"S\" para confirmar:");
+		dadosOkay = userInput.nextLine();
+		/*
+		 * se conta do cartao é a conta de destino, entao trata-se de uma transferencia 
+		 * entre contas do mesmo cliente.
+		 */
+		String tipoDescr = "TRFOUT";
+		String origemDestino = "destino";
+		boolean isMesmoCliente = false;
+		if("S".equalsIgnoreCase(dadosOkay)) {
+			origemDestino = "origem";
+			isMesmoCliente = true;
+			tipoDescr = "TRFIN";
+		} else if (cartao.getConta().getSaldo() <= 0) {
+			System.out.println("Primeiro deposite fundos na sua conta à ordem para poder efetuar uma transferência!\nVou terminar!");
+			userInput.nextLine();
+			return;
+		}
+
+		ContaDAO contaDao  =  new ContaDAO();
+		Conta contaReferencia = null;
+
+		do {
+			do {
+				if (isMesmoCliente) {
+					refAgenciaID = cartao.getConta().getCliente().getAgencia().getAgenciaID();
+				} else {
+					System.out.println("Digite o numero da agência da conta de "+origemDestino+" (Digite 0 p/Cancelar): ");
+					refAgenciaID = parseInteger(userInput.nextLine());
+				}
+
+				if (refAgenciaID > 0) {
+					do {
+						System.out.println("Digite o numero da conta de "+origemDestino+" (Digite 0 p/Cancelar): ");
+						refNumeroConta = parseInteger(userInput.nextLine());
+						
+						if (cartao.getConta().getCliente().getAgencia().getAgenciaID() == refAgenciaID &&
+								cartao.getConta().getNumeroConta() == refNumeroConta) {
+							System.out.println("Conta de destino e conta de origem devem ser diferentes!");
+							refNumeroConta = -1;
+						}
+					} while (refNumeroConta < 0);
+
+					if (refNumeroConta == 0) {
+						System.out.println("Operação cancelada pelo utilizador.");
+						return;
+					}
+					
+					contaReferencia = contaDao.consultaConta(refAgenciaID, refNumeroConta);
+
+					if (contaReferencia == null) {
+						System.out.println("Conta não encontrada!");
+					} else {
+						System.out.println("Conta selecionada:   Nº ["+contaReferencia.getNumeroConta()+
+								"-"+contaReferencia.getDescricao()+"], Tipo ["+contaReferencia.getTipo()+"]");
+						System.out.println("\t\tAgencia ["+	contaReferencia.getCliente().getAgencia().getAgenciaID()+
+								"-" + contaReferencia.getCliente().getAgencia().getNome() + "]");
+						System.out.println("\t\tCliente [" + contaReferencia.getCliente().getNumeroCliente() +
+								"-" + contaReferencia.getCliente().getNome() + "]");
+						
+						if (isMesmoCliente && cartao.getConta().getCliente().getNumeroCliente() != contaReferencia.getCliente().getNumeroCliente()) {
+							System.out.println("Não permitido! Conta não pertence ao cliente selecionado.");
+							contaReferencia = null;
+						} 
+						
+						if (isMesmoCliente == false) {
+							if (cartao.getConta().getCliente().getAgencia().getAgenciaID() == contaReferencia.getCliente().getAgencia().getAgenciaID() &&
+									cartao.getConta().getCliente().getNumeroCliente() == contaReferencia.getCliente().getNumeroCliente()) {
+								if ("ORDEM".equals(contaReferencia.getTipo())) {
+									System.out.println("A conta de "+origemDestino+" não pode ser do tipo \"ORDEM\".");
+									contaReferencia = null;
+								} else {
+									isMesmoCliente = true;
+								}
+							}
+							// se for uma conta de outro cliente tem que ser conta à ordem
+							if ((isMesmoCliente == false) && !("ORDEM".equals(contaReferencia.getTipo()))) {
+									System.out.println("A conta destino deve ser do tipo \"ORDEM\".");
+									contaReferencia = null;
+							}
+
+						}
+					}
+
+				}
+			} while (refAgenciaID != 0 && contaReferencia == null);
+
+			if (refAgenciaID == 0) {
+				dadosOkay = "C";
+			} else {
+				do {
+					System.out.println("Digite o valor a transferir: ");
+					valor = parseDouble(userInput.nextLine());
+					if (valor > cartao.getConta().getSaldo()) {
+						System.out.println("Não tem saldo suficiente na sua conta");
+					}
+				} while (valor <= 0);
+
+				System.out.println("Digite uma descrição para este movimento (opcional): ");
+				descricao = userInput.nextLine();
+
+				System.out.println("Os dados estão corretos? Inserir \"s\" ou \"S\" para confirmar. (\"C\" para cancelar)");
+				dadosOkay = userInput.nextLine();
+			}
+		} while (!"S".equalsIgnoreCase(dadosOkay) & !"C".equalsIgnoreCase(dadosOkay));
+
+		if ("C".equalsIgnoreCase(dadosOkay)) {
+			System.out.println("Operação cancelada pelo utilizador.");
+			return;
+		}
+
+		criaTransferencia(cartao, contaReferencia, tipoDescr, valor, descricao);
+	}
+	
+	/*
+	 * cria transferencia ja´com dados do cartao da conta à ordem, contaDestino e valor a transferir 
+	 */
+	public static void criaTransferencia(Cartao cartao, Conta contaReferencia, String tipoDescr, double valor, String descricao) {
+		/*
+		 * cartao -> é sempre referente à conta à ordem do cliente que realiza a tranferencia
+		 * tipoDescr : 	TRFIN 	-> entrada na conta à ordem (apenas as mobilizacao de contas do cliente)
+		 * 				TRFOUT 	-> saida da conta à ordem (reforço/constituição contas poupanca, 
+		 * 						ou transferencia para conta outro cliente)
+		 * contaReferencia 	-> se for uma entrada (TRFIN) corresponde à conta origem da transferencia
+		 *  				-> se for uma saída (TRFOUT) corresponde à conta de destino da transferencia
+		 */
+		
+		System.out.println("A criar transferencia! Aguarde...");
+		
+		Scanner userInput = new Scanner(System.in);
+		
+		/*
+		 * Se a conta destino é do mesmo cliente, usa o mesmo cartao nas duas contas;
+		 * Se a conta destino é de outro cliente, cria um cartao fictício "em branco"
+		 */
+		Cartao tempCartao = null;
+		if (cartao.getConta().getCliente().getAgencia().getAgenciaID() == contaReferencia.getCliente().getAgencia().getAgenciaID() &&
+				cartao.getConta().getCliente().getNumeroCliente() == contaReferencia.getCliente().getNumeroCliente()) {
+			tempCartao = new Cartao(cartao.getCartaoID(), cartao.getDescricao(), cartao.getNomeNoCartao(), cartao.getDataCriacao(),
+					cartao.getDataValidade(), cartao.getTipo(), contaReferencia);
+		} else {
+			tempCartao = new Cartao(0, "", "", "1900-01-01", LocalDate.MAX.toString(), 'D', contaReferencia);
+		}
+		
+		//Debug
+		System.out.println(cartao.toString());
+		System.out.println(tempCartao.toString());
+		//userInput.nextLine();
+		// ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+		
+		if ("TRFOUT".equals(tipoDescr)) {
+			//boolean isTransfereOk = cartao.levanta(valor);
+			boolean isTransfereOk = cartao.tranfere(contaReferencia, valor);
+			if (isTransfereOk == false) {
+				System.out.println("Operação cancelada! Verifique os dados p.f.");
+				userInput.nextLine();
+				return;			
+			}
+		} else {
+			boolean isTransfereOk = tempCartao.tranfere(cartao.getConta(), valor);
+			if (isTransfereOk == false) {
+				System.out.println("Operação cancelada! Verifique os dados p.f.");
+				userInput.nextLine();
+				return;			
+			}
+		}
+
+		/*----------------------------------------------------------------
+		 * Atualiza na CONTA À ORDEM ORIGEM o saldo e o ultimo movimento
+		 */
+		int agenciaID = cartao.getConta().getCliente().getAgencia().getAgenciaID();
+		int numeroConta = cartao.getConta().getNumeroConta();
+		
+		int ultimoMovimento = cartao.getConta().getUtimoMovimento() + 1;
+		double saldo = cartao.getConta().getSaldo();
+		
+		ContaDAO contaDao = new ContaDAO();		
+		contaDao.atualizaSaldoUltimoMovimento(agenciaID, numeroConta, saldo, ultimoMovimento);
+
+		cartao.getConta().setUltimoMovimento(ultimoMovimento);
+		
+		/*----------------------------------------------------------------
+		 * Atualiza na CONTA DE REFERENCIA o saldo e o ultimo movimento
+		 */
+		agenciaID = tempCartao.getConta().getCliente().getAgencia().getAgenciaID();
+		numeroConta = tempCartao.getConta().getNumeroConta();
+		
+		int ultimoMovimentoRef = tempCartao.getConta().getUtimoMovimento() + 1;
+		saldo = tempCartao.getConta().getSaldo();
+		
+		contaDao.atualizaSaldoUltimoMovimento(agenciaID, numeroConta, saldo, ultimoMovimento);
+
+		tempCartao.getConta().setUltimoMovimento(ultimoMovimentoRef);
+
+		/*
+		 *----------------------------------------------------------------
+		 */
+		LocalDateTime today = LocalDateTime.now();
+		String dataMovimento = today.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+		char tipoA, tipoB;
+		String tipoDescrA, tipoDescrB;
+		if (tipoDescr == "TRFOUT") {
+			tipoA = 'D';
+			tipoDescrA = "TRFOUT";
+			tipoB = 'C';
+			tipoDescrB = "TRFIN";
+		} else {
+			tipoA = 'C';
+			tipoDescrA = "TRFIN";
+			tipoB = 'D';
+			tipoDescrB = "TRFOUT";
+		}
+
+		Movimento movimentoA = new Movimento(ultimoMovimento, dataMovimento, valor, tipoA, tipoDescrA, descricao, cartao, contaReferencia, ultimoMovimentoRef);
+		Movimento movimentoB = new Movimento(ultimoMovimentoRef, dataMovimento, valor, tipoB, tipoDescrB, descricao, tempCartao, cartao.getConta(), ultimoMovimento);
+		MovimentoDAO movimentoDao = new MovimentoDAO();
+		movimentoDao.insereMovimento(movimentoA);
+		movimentoDao.insereMovimento(movimentoB);
+
 	}
 	
 	
@@ -1186,7 +1754,6 @@ public class Application {
 	 * 6.2 - Novo levantamento
 	 */
 	public static void criaLevantamento() {
-		System.out.println("\n[6-2.Novo levantamento] : opção ainda não implementada...\n\n");
 		double valor;
 		String descricao, dadosOkay; 
 		
@@ -1336,6 +1903,12 @@ public class Application {
 	        return 0.0;
 	    else
 	        return Double.parseDouble(s);
+	}	
+	private static int parseInteger(String s){
+	    if(s == null || s.isEmpty() || !s.matches("[0-9]*")) 
+	        return -1;
+	    else
+	        return Integer.parseInt(s);
 	}	
 	
 	/*

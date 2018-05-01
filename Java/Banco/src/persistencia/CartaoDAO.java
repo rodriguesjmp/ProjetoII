@@ -5,10 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logica.Agencia;
 import logica.Cartao;
 import logica.CartaoCredito;
-import logica.Cliente;
 import logica.Conta;
 
 public class CartaoDAO implements ICartaoDAO {
@@ -28,11 +26,27 @@ public class CartaoDAO implements ICartaoDAO {
 					String descricao = rs.getString(6);
 					String nomeNoCartao = rs.getString(7);
 					String dataValidade = rs.getString(8);
+					int diasPrazoPagamento = 0;
+					int diaInicioExtrato = 0;
+					double plafondMensal = 0.0;
+					double plafondDisponivel = 0.0;
+					if (tipo == 'C') {
+						plafondMensal = rs.getDouble(9);
+						plafondDisponivel = rs.getDouble(10);
+						diasPrazoPagamento = rs.getInt(11);;
+						diaInicioExtrato = rs.getInt(12);;							
+					}
 					
 					ContaDAO contaDao = new ContaDAO();
 					Conta conta = contaDao.consultaConta(agenciaID, numeroConta);
 					
-					Cartao cartao = new Cartao(cartaoID, descricao, nomeNoCartao, dataCriacao, dataValidade, tipo, conta);
+					Cartao cartao;
+					if (tipo == 'C') {
+						cartao = new CartaoCredito(cartaoID, descricao, nomeNoCartao, dataCriacao, dataValidade, tipo, conta, 
+								diasPrazoPagamento, diaInicioExtrato, plafondMensal, plafondDisponivel);
+					} else {
+						cartao = new Cartao(cartaoID, descricao, nomeNoCartao, dataCriacao, dataValidade, tipo, conta);
+					}
 					dbutilities.DisconnectFromDB();
 					
 					return cartao;
@@ -85,18 +99,18 @@ public class CartaoDAO implements ICartaoDAO {
 	@Override
 	public int insereCartao(CartaoCredito cartaoCredito) {
 		String cmdSql;
-		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, data_validade, " + 
-				"plafond_mensal, plafond_disponivel, data_limite_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
+		cmdSql = "INSERT INTO jmpr1525_Banco.cartoes (cartao_id, agencia_id, numero_conta, tipo, data_criacao, descricao, nome_no_cartao, data_validade, " + 
+				"plafond_mensal, plafond_disponivel, dias_prazo_pagamento, dia_inicio_extrato) VALUES (NULL, \"" +
 				String.valueOf(cartaoCredito.getConta().getCliente().getAgencia().getAgenciaID()) + "\", \"" + 
 				String.valueOf(cartaoCredito.getConta().getNumeroConta()) + "\", '" +
-				String.valueOf(cartaoCredito.getTipo()) + "', \"" +
+				cartaoCredito.getTipo() + "', \"" +
 				cartaoCredito.getDataCriacao() + "\", \"" +
 				cartaoCredito.getDescricao() + "\", \"" +
 				cartaoCredito.getNomeNoCartao() + "\", \"" +
 				cartaoCredito.getDataValidade() + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondMensal()) + "\", \"" +
 				String.valueOf(cartaoCredito.getPlafondDisponivel()) + "\", \"" +
-				cartaoCredito.getDataLimitePagamento() + "\", \"" +
+				String.valueOf(cartaoCredito.getDiasPrazoPagamento()) + "\", \"" +
 				String.valueOf(cartaoCredito.getDiaInicioExtrato()) + "\")";
 		
 		int lastId = createCartao(cmdSql);
@@ -107,12 +121,19 @@ public class CartaoDAO implements ICartaoDAO {
 	private int  createCartao(String cmdSql) {
 		DbUtilities dbutilities = new DbUtilities();
 		int lastId = dbutilities.ExecuteSqlStatement(cmdSql);
-		System.out.println("O registo foi inserido com sucesso.");
+
+		if (lastId > 0) {
+			System.out.println("O registo foi inserido com sucesso.");
+		} else {
+			System.out.println("Erros! Verifique.");
+		}
+
 		dbutilities.DisconnectFromDB();
 		
 		return lastId;
 	}
 
+	/*
 	private int  createCartao(String cmdSql, String[] dados) {
 		DbUtilities dbutilities = new DbUtilities();
 		int lastId = dbutilities.ExecuteSqlStatement(cmdSql, dados);
@@ -121,7 +142,8 @@ public class CartaoDAO implements ICartaoDAO {
 		
 		return lastId;
 	}
-
+	*/
+	
 	@Override
 	public void alteraCartao(Cartao cartao) {
 		DbUtilities dbutilities = new DbUtilities();
@@ -157,7 +179,7 @@ public class CartaoDAO implements ICartaoDAO {
 				"\", data_validade = \"" + cartaoCredito.getDataValidade() +
 				"\", plafond_mensal = \"" + String.valueOf(cartaoCredito.getPlafondMensal()) +
 				"\", plafond_disponivel = \"" + String.valueOf(cartaoCredito.getPlafondDisponivel()) +
-				"\", data_limite_pagamento = \"" + cartaoCredito.getDataLimitePagamento() +
+				"\", dias_prazo_pagamento = \"" + String.valueOf(cartaoCredito.getDiasPrazoPagamento()) +
 				"\", dia_inicio_extrato = \"" + String.valueOf(cartaoCredito.getDiaInicioExtrato()) +
 				"\" WHERE cartao_id = \"" + Integer.toString(cartaoCredito.getCartaoID()) + "\"";
 
